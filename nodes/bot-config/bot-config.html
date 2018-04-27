@@ -1,0 +1,68 @@
+<script type="text/javascript">
+    RED.nodes.registerType('telegrambot-config',{
+        category: 'config',
+        defaults: {
+            botname: { value: "", required: true },
+            usernames: { value: "", required: false },
+            chatIds: { value: "", required: false },
+            pollInterval: { value: 300, required: false, validate:RED.validators.number() }
+        },
+        credentials: {
+            token: { type: "text" }
+        },
+        label: function() {
+            return this.botname;
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="telegrambot-config">
+    <div class="form-row">
+        <label for="node-config-input-botname"><i class="fa fa-telegram"></i> Bot-Name</label>
+        <input type="text" id="node-config-input-botname" placeholder="(e.g. MyTelegramBot)">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-token"><i class="fa fa-key"></i> Token</label>
+        <input type="text" id="node-config-input-token" placeholder="(e.g. 12345:ABCdef-FDAfds)">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-usernames"><i class="fa fa-user"></i> Users</label>
+        <input type="text" id="node-config-input-usernames" placeholder="(e.g. hugo,sepp,egon)">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-chatIds"><i class="fa fa-comment"></i> Chat IDs</label>
+        <input type="text" id="node-config-input-chatIds" placeholder="(e.g. -1234567,2345678,-3456789)">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-pollInterval"><i class="fa fa-clock-o"></i> Polling Interval</label>
+        <input type="text" id="node-config-input-pollInterval" placeholder="(Optional poll interval in milliseconds. The default is 300.)">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="telegrambot-config">
+    <p>Telegram bot configuration</p>
+
+    <h3>Config</h3>
+    <dl class="message-properties">
+        <dt>Bot-Name <span class="property-type">string</span></dt>
+        <dd>Label for this configuration. Name it anything you would like for easy reference.</dd>
+
+        <dt>Token <span class="property-type">string</span></dt>
+        <dd>Token provided by botfather for connecting to Telegram</dd>
+
+        <dt class="optional">Users <span class="property-type">list</span></dt>
+        <dd>Optional. Usernames the bot is permitted access. Enter values in comma separated format. Leave blank to allow everyone.</dd>
+
+        <dt class="optional">Chat IDs <span class="property-type">list</span></dt>
+        <dd>Optional. Chat IDs the bot is permitted access. Enter values in comma separated format. Leave blank to allow all.</dd>
+
+        <dt class="optional">Polling Interval <span class="property-type">number</span></dt>
+        <dd>How frequently the telegram API should be polled in seconds. Default of 300, or 5 minutes.</dd>
+    </dl>
+
+    <h3>Details</h3>
+    <p>Every node requires a configuration attached to define how to connect to Telegram. That is this config node's primary purpose.</p>
+
+    <h3>References</h3>
+    <p>To setup your bot, you can send a message to BotFather. Further details are available <a href="https://core.telegram.org/bots#6-botfather" target="_blank" rel="noopener noreferrer">here</a>.</p>
+</script>
