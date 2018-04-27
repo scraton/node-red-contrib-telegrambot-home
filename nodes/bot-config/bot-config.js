@@ -110,15 +110,15 @@ module.exports = function(RED) {
       return (node.usernames.length === 0) || (node.usernames.indexOf(user) >= 0);
     };
 
-    this.isAuthroizedChat = function(chatId) {
+    this.isAuthorizedChat = function(chatId) {
       return (node.chatIds.length === 0) || (node.chatIds.indexOf(chatId) >= 0);
     };
 
-    this.isAuthorized = function(node) {
-      var isAuthorizedUser = node.isAuthorizedUser(user);
+    this.isAuthorized = function(chatId, username) {
+      var isAuthorizedUser = node.isAuthorizedUser(username);
       var isAuthroizedChat = node.isAuthorizedChat(chatId);
 
-      return isAuthorizedUser || isAuthroizedChat;
+      return isAuthorizedUser && isAuthroizedChat;
     };
 
     this.register = function(n) {
