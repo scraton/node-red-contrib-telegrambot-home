@@ -5,7 +5,7 @@ services:
     image: nodered/node-red-docker
     volumes:
       - nodered:/data
-      - '.:/data/node_modules/node-red-contrib-telegrambot-switches'
+      - '.:/data/node_modules/node-red-contrib-telegrambot-home'
     ports:
       - 1880:1880
 

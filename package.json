@@ -1,14 +1,14 @@
 {
-  "name": "node-red-contrib-telegrambot-switches",
+  "name": "node-red-contrib-telegrambot-home",
   "version": "0.1.0",
-  "description": "Have a telegram bot ask questions, get responses, and continue the flow",
+  "description": "Useful nodes for connecting your home to Telegram",
   "node-red": {
     "nodes": {
       "bot": "nodes/bot-config/bot-config.js",
       "switch": "nodes/switch/switch.js"
     }
   },
-  "repository": "git+https://github.com/scraton/node-red-contrib-telegrambot-switches.git",
+  "repository": "git+https://github.com/scraton/node-red-contrib-telegrambot-home.git",
   "keywords": [
     "node-red",
     "telegram",
@@ -25,9 +25,9 @@
   "author": "Stephen Craton",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/scraton/node-red-contrib-telegrambot-switches/issues"
+    "url": "https://github.com/scraton/node-red-contrib-telegrambot-home/issues"
   },
-  "homepage": "https://github.com/scraton/node-red-contrib-telegrambot-switches#readme",
+  "homepage": "https://github.com/scraton/node-red-contrib-telegrambot-home#readme",
   "dependencies": {
     "node-telegram-bot-api": "^0.30.0"
   }
