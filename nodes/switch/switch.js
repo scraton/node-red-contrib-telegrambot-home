@@ -8,6 +8,7 @@ module.exports = function(RED) {
     this.chatId = parseInt(config.chatId);
     this.question = config.question || "";
     this.answers = config.answers || [];
+    this.autoAnswerCallback = config.autoAnswerCallback;
 
     if (this.bot) {
       this.bot.register(node);
@@ -31,16 +32,6 @@ module.exports = function(RED) {
       this.status({ fill: 'red', shape: 'ring', text: 'chat ID not provided' });
     }
 
-    this.hasContent = function(msg) {
-      var hasContent = this.question || msg.payload;
-
-      if (!hasContent) {
-        node.warn('question and msg.payload are empty');
-      }
-
-      return hasContent;
-    };
-
     this.on('input', function(msg){
       var question = this.question || msg.payload;
       var answers = this.answers || [];
@@ -58,15 +49,20 @@ module.exports = function(RED) {
               // Remove this listener since we got our reply
               node.telegramBot.removeListener('callback_query', listener);
 
-              // Answer the callback so progress can stop showing
-              node.telegramBot.answerCallbackQuery(callbackQueryId).then(function(sent){
-                // nothing to do here
-              });
+              if (node.autoAnswerCallback) {
+                // Answer the callback so progress can stop showing
+                node.telegramBot.answerCallbackQuery(callbackQueryId).then(function(sent){
+                  // nothing to do here
+                });
 
-              // Remove quick reply options
-              node.telegramBot.editMessageReplyMarkup('{}', { chat_id: chatId, message_id: messageId }).then(function(sent){
-                // nothing to do here
-              });
+                // Remove quick reply options
+                node.telegramBot.editMessageReplyMarkup('{}', { chat_id: chatId, message_id: messageId }).then(function(sent){
+                  // nothing to do here
+                });
+              }
+
+              // Augment original message with additional Telegram info
+              msg.telegram.callbackQueryId = callbackQueryId;
 
               // Continue with the original message
               var portCount = answers.length;
@@ -107,7 +103,7 @@ module.exports = function(RED) {
         } else {
           node.telegramBot.sendMessage(chatId, question, options).then(function(sent){
             // Store sent message so we know how to respond later
-            msg.telegram = { messageId: sent.message_id };
+            msg.telegram = { chatId: chatId, messageId: sent.message_id };
           });
 
           node.telegramBot.on('callback_query', listener);

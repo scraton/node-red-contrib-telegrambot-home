@@ -13,7 +13,8 @@
             chatId: { value: "", required: true },
             question: { value: "" },
             answers: { value: [{ v:"", vt:"str" }] },
-            outputs: { value: 1 }
+            outputs: { value: 1 },
+            autoAnswerCallback: { value: true, required: false }
         },
         inputs: 1,
         outputs: 1,
@@ -148,6 +149,10 @@
         <input type="text" id="node-input-chatId" placeholder="(e.g. 1234)">
     </div>
     <div class="form-row">
+        <label for="node-input-autoAnswerCallback">Auto-Answer</label>
+        <input type="checkbox" id="node-input-autoAnswerCallback" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+    <div class="form-row">
         <label for="node-input-question">Question</label>
         <input type="text" id="node-input-question" placeholder="(e.g. Should I continue?)">
     </div>
@@ -175,10 +180,27 @@
         <dt>Chat ID <span class="property-type">int</span></dt>
         <dd>Telegram chat ID to send the question</dd>
 
+        <dt class="optional">Auto-Answer <span class="property-type">list</span></dt>
+        <dd>When enabled, automatically respond to the Telegram callback to resolve it as finished. Otherwise, you will have to send a payload to Telegram yourself to mark the request as complete.</dd>
+
         <dt class="optional">Question <span class="property-type">string</span></dt>
         <dd>Question to ask the user. If not provided, <code>msg.payload</code> will be used.</dd>
 
         <dt>Answers <span class="property-type">list</span></dt>
         <dd>The answer choices to present the user. Each answer will correspond to its designated output.</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <p>The original message is sent back out the appropriate output based on the answer received from Telegram but with the addition of a <code>msg.telegram</code> object. The keys of this object are described below.</p>
+
+    <dl class="message-properties">
+        <dt>chatId <span class="property-type">int</span></dt>
+        <dd>The chat ID the messages are being sent/received in.</dd>
+
+        <dt>messageId <span class="property-type">int</span></dt>
+        <dd>The ID of the message that was sent prompting for a response.</dd>
+
+        <dt>callbackQueryId <span class="property-type">string</span></dt>
+        <dd>The ID of the callback query. Useful if you decided to not auto-answer the callback.</dd>
     </dl>
 </script>
