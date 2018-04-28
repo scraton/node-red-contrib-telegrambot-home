@@ -32,3 +32,13 @@ An environment with node-red can be easily spun up using Docker and Docker Compo
 1. Clone this repository:        `git clone https://github.com/scraton/node-red-contrib-telegrambot-home`
 1. Install node dependencies:    `cd node-red-contrib-telegrambot-home && yarn install`
 1. Start the docker environment: `yarn run dev`
+
+---
+## Credits
+
+Gotta give credit where credit is due.
+
+* [node-red](https://github.com/node-red/node-red)
+* [node-red-contrib-home-assistant](https://github.com/AYapejian/node-red-contrib-home-assistant)
+* [node-red-contrib-telegrambot](https://github.com/windkh/node-red-contrib-telegrambot)
+* [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
