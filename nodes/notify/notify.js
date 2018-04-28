@@ -1,3 +1,5 @@
+var utils = require('../../lib/utils.js');
+
 module.exports = function(RED) {
   function NotifyNode(config) {
     RED.nodes.createNode(this, config);
@@ -8,33 +10,19 @@ module.exports = function(RED) {
     this.chatId = parseInt(config.chatId);
     this.staticMessage = config.message;
 
-    if (this.bot) {
-      this.bot.register(node);
-      this.status({ fill: "red", shape: "ring", text: "disconnected" });
+    // Initialize bot
+    utils.initializeBot(node);
 
-      node.telegramBot = this.bot.getTelegramBot();
-
-      if (node.telegramBot) {
-        this.status({ fill: "green", shape: "dot", text: "connected" });
-      } else {
-        node.warn("bot not initialized");
-        this.status({ fill: "red", shape: "ring", text: "bot not initialized" });
-      }
-    } else {
-      node.warn("config node failed to initialize");
-      this.status({ fill: "red", shape: "ring", text: "config node failed to initialize" });
-    }
-
+    // Verify inputs
     if (!this.chatId || isNaN(this.chatId)) {
-      node.warn("chat ID not provided");
-      this.status({ fill: "red", shape: "ring", text: "chat ID not provided" });
+      utils.updateNodeStatusFailed(node, "chat ID not provided");
     }
 
     this.on("input", function(msg){
       if (!(node.staticMessage || msg.payload)) {
-        node.warn('message payload is empty');
+        utils.updateNodeStatusFailed(node, "message payload is empty");
       } else if (!node.chatId) {
-        node.warn('chatId is empty');
+        utils.updateNodeStatusFailed(node, "chat ID is empty");
       } else {
         var message = node.staticMessage || msg.payload;
         var chunkSize = 4000;
