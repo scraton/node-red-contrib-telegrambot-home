@@ -43,6 +43,10 @@ You can then use the token and chat ID to configure the nodes.
 
 You can view detailed documentation for the nodes via the node-red info pane. Just select a node and start readin'.
 
+* [switch](#switch)
+* [notify](#notify)
+* [payload](#payload)
+
 ### switch
 
 Route messages based on a response from a user via Telegram
@@ -56,6 +60,24 @@ Send a notification to a user via Telegram
 
 ![](images/TelegramNotifyFlow.png?raw=true "Notify Flow")
 ![](images/TelegramNotifyBotMessage.png?raw=true "Telegram Message")
+
+### payload
+
+Send an arbitrary payload via any available method to a user via Telegram
+
+All of the [Telegram API methods](https://core.telegram.org/bots/api#available-methods) are available to you, either through the node properties or via dynamic payload generation.
+
+#### Static
+
+![](images/TelegramStaticPayloadFlow.png?raw=true "Static Payload Flow")
+![](images/TelegramStaticPayloadNode.png?raw=true "Static Payload Node Properties")
+![](images/TelegramStaticPayloadBotMessage.png?raw=true "Telegram Message")
+
+#### Dynamic
+
+![](images/TelegramDynamicPayloadFlow.png?raw=true "Dynamic Payload Flow")
+![](images/TelegramDynamicPayloadNode.png?raw=true "Dynamic Payload Function")
+![](images/TelegramDynamicPayloadBotMessage.png?raw=true "Telegram Message")
 
 ---
 ## Development
