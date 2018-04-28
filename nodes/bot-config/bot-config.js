@@ -1,14 +1,14 @@
 module.exports = function(RED) {
-  var telegramBot = require('node-telegram-bot-api');
+  var telegramBot = require("node-telegram-bot-api");
 
   function BotConfigNode(n) {
     RED.nodes.createNode(this, n);
     var node = this;
 
     this.botname = n.botname;
-    this.status = 'disconnected';
-    this.usernames = (n.usernames) ? n.usernames.split(',') : [];
-    this.chatIds = (n.chatIds) ? n.chatIds.split(',') : [];
+    this.status = "disconnected";
+    this.usernames = (n.usernames) ? n.usernames.split(",") : [];
+    this.chatIds = (n.chatIds) ? n.chatIds.split(",") : [];
     this.pollInterval = parseInt(n.pollInterval);
     this.nodes = [];
 
@@ -34,33 +34,33 @@ module.exports = function(RED) {
             };
 
             this.telegramBot = new telegramBot(this.token, options);
-            node.status = 'connected';
+            node.status = "connected";
 
-            this.telegramBot.on('error', function(error){
+            this.telegramBot.on("error", function(error){
               node.warn(error.message);
 
               node.abortBot(error.message, function(){
-                node.warn('Bot stopped: fatal error');
+                node.warn("Bot stopped: fatal error");
               });
             });
 
-            this.telegramBot.on('polling_error', function(error){
+            this.telegramBot.on("polling_error", function(error){
               node.warn(error.message);
 
               var stopPolling = false;
               var hint;
 
-              if (error.message == 'ETELEGRAM: 401 Unauthorized') {
+              if (error.message == "ETELEGRAM: 401 Unauthorized") {
                 hint = `Please check that your bot token is valid: ${node.token}`;
                 stopPolling = true;
               } else if (error.message.startsWith("EFATAL: Error: connect ETIMEDOUT")) {
-                hint = 'Timeout connecting to server. Trying again.';
+                hint = "Timeout connecting to server. Trying again.";
               } else if (error.message.startsWith("EFATAL: Error: read ECONNRESET")) {
-                hint = 'Network connection may be down. Trying again.';
+                hint = "Network connection may be down. Trying again.";
               } else if (error.message.startsWith("EFATAL: Error: getaddrinfo ENOTFOUND")) {
-                hint = 'Network connection may be down. Trying again.';
+                hint = "Network connection may be down. Trying again.";
               } else {
-                hint = 'Unknown error. Trying again.';
+                hint = "Unknown error. Trying again.";
               }
 
               if (stopPolling) {
@@ -72,11 +72,11 @@ module.exports = function(RED) {
               }
             });
 
-            this.telegramBot.on('webhook_error', function(error){
+            this.telegramBot.on("webhook_error", function(error){
               node.warn(error.message);
 
               node.abortBot(error.message, function() {
-                node.warn('Bot stopped: webhook error');
+                node.warn("Bot stopped: webhook error");
               })
             });
           }
@@ -86,8 +86,8 @@ module.exports = function(RED) {
       return this.telegramBot;
     };
 
-    this.on('close', function(done){
-      node.abortBot('closing', done);
+    this.on("close", function(done){
+      node.abortBot("closing", done);
     });
 
     this.abortBot = function(hint, done){
@@ -95,13 +95,13 @@ module.exports = function(RED) {
         node.telegramBot.stopPolling()
                         .then(function(){
                           node.telegramBot = null;
-                          node.status = 'disconnected';
-                          node.setNodeStatus({ fill: 'red', shape: 'ring', text: `bot stopped (${hint})`});
+                          node.status = "disconnected";
+                          node.setNodeStatus({ fill: "red", shape: "ring", text: `bot stopped (${hint})`});
                           done();
                         });
       } else {
-        node.status = 'disconnected';
-        node.setNodeStatus({ fill: 'red', shape: 'ring', text: `bot stopped (${hint})`});
+        node.status = "disconnected";
+        node.setNodeStatus({ fill: "red", shape: "ring", text: `bot stopped (${hint})`});
         done();
       }
     };
@@ -136,7 +136,7 @@ module.exports = function(RED) {
     };
   }
 
-  RED.nodes.registerType('telegrambot-config', BotConfigNode, {
+  RED.nodes.registerType("telegrambot-config", BotConfigNode, {
     credentials: {
       token: { type: "text" }
     }

@@ -12,27 +12,27 @@ module.exports = function(RED) {
 
     if (this.bot) {
       this.bot.register(node);
-      this.status({ fill: 'red', shape: 'ring', text: 'disconnected' });
+      this.status({ fill: "red", shape: "ring", text: "disconnected" });
 
       node.telegramBot = this.bot.getTelegramBot();
 
       if (node.telegramBot) {
-        this.status({ fill: 'green', shape: 'dot', text: 'connected' });
+        this.status({ fill: "green", shape: "dot", text: "connected" });
       } else {
-        node.warn('bot not initialized');
-        this.status({ fill: 'red', shape: 'ring', text: 'bot not initialized' });
+        node.warn("bot not initialized");
+        this.status({ fill: "red", shape: "ring", text: "bot not initialized" });
       }
     } else {
-      node.warn('config node failed to initialize');
-      this.status({ fill: 'red', shape: 'ring', text: 'config node failed to initialize' });
+      node.warn("config node failed to initialize");
+      this.status({ fill: "red", shape: "ring", text: "config node failed to initialize" });
     }
 
     if (!this.chatId || isNaN(this.chatId)) {
-      node.warn('chat ID not provided');
-      this.status({ fill: 'red', shape: 'ring', text: 'chat ID not provided' });
+      node.warn("chat ID not provided");
+      this.status({ fill: "red", shape: "ring", text: "chat ID not provided" });
     }
 
-    this.on('input', function(msg){
+    this.on("input", function(msg){
       var question = this.question || msg.payload;
       var answers = this.answers || [];
       var chatId = this.chatId;
@@ -47,7 +47,7 @@ module.exports = function(RED) {
           if (botMsg.data && chatId === node.chatId && messageId === msg.telegram.messageId) {
             if (node.bot.isAuthorized(chatId, username)) {
               // Remove this listener since we got our reply
-              node.telegramBot.removeListener('callback_query', listener);
+              node.telegramBot.removeListener("callback_query", listener);
 
               if (node.autoAnswerCallback) {
                 // Answer the callback so progress can stop showing
@@ -56,7 +56,7 @@ module.exports = function(RED) {
                 });
 
                 // Remove quick reply options
-                node.telegramBot.editMessageReplyMarkup('{}', { chat_id: chatId, message_id: messageId }).then(function(sent){
+                node.telegramBot.editMessageReplyMarkup("{}", { chat_id: chatId, message_id: messageId }).then(function(sent){
                   // nothing to do here
                 });
               }
@@ -77,10 +77,10 @@ module.exports = function(RED) {
                 ports[outputPort] = msg;
                 node.send(ports);
               } else {
-                node.warn('invalid callback data received from telegram');
+                node.warn("invalid callback data received from telegram");
               }
             } else {
-              node.warn('received callback was unauthorized');
+              node.warn("received callback was unauthorized");
             }
           } else {
             // This is not the listener you are looking for
@@ -99,23 +99,23 @@ module.exports = function(RED) {
         };
 
         if (question.length > chunkSize) {
-          node.warn('Unable to send message, larger than chunk size. Shorten the payload and try again.');
+          node.warn("Unable to send message, larger than chunk size. Shorten the payload and try again.");
         } else {
           node.telegramBot.sendMessage(chatId, question, options).then(function(sent){
             // Store sent message so we know how to respond later
             msg.telegram = { chatId: chatId, messageId: sent.message_id };
           });
 
-          node.telegramBot.on('callback_query', listener);
+          node.telegramBot.on("callback_query", listener);
         }
       }
     });
 
-    this.on('close', function(){
-      node.telegramBot.off('message');
+    this.on("close", function(){
+      node.telegramBot.off("message");
       node.status({});
     });
   };
 
-  RED.nodes.registerType('telegrambot-switch', SwitchNode);
+  RED.nodes.registerType("telegrambot-switch", SwitchNode);
 };
