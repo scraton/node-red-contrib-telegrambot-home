@@ -17,12 +17,19 @@ sudo service nodered restart
 
 You can view detailed documentation for the nodes via the node-red info pane. Just select a node and start readin'.
 
-### telegram switch
+### switch
 
 Route messages based on a response from a user via Telegram
 
 ![](images/TelegramSwitchFlow.png?raw=true "Switch Flow")
 ![](images/TelegramSwitchBotMessage.png?raw=true "Telegram Message")
+
+### notify
+
+Send a notification to a user via Telegram
+
+![](images/TelegramNotifyFlow.png?raw=true "Notify Flow")
+![](images/TelegramNotifyBotMessage.png?raw=true "Telegram Message")
 
 ---
 ## Development
