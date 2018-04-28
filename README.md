@@ -13,6 +13,32 @@ npm install node-red-contrib-telegrambot-home
 sudo service nodered restart
 ```
 
+## Telegram Bot Setup
+
+You will need to setup a Telegram bot in order to use these nodes. You can follow [these instructions](https://core.telegram.org/bots#6-botfather) for how to do it. In summary:
+
+1. **Create the bot:** Send BotFather the message `/newbot`
+1. **Name the bot:** Give it any name. This is how you will see it in Telegram.
+1. **Give the bot a username:** Must be unique. Doesn't have to match the bot's name.
+1. **Grab the token:** You will need this for configuring the nodes.
+1. **Send the bot a message:** Just say hi or click the start button in the chat window.
+1. **Grab the chat ID:** `curl "https://api.telegram.org/bot${TOKEN}/getUpdates"` replacing `${TOKEN}` with your bot token.
+
+You will get a JSON response like the following:
+
+```json
+{"ok":true,"result":[{"update_id":123456,
+"message":{"message_id":1,"from":{"id":123,"is_bot":false,"first_name":"Your","last_name":"Name","language_code":"en-US"},"chat":{"id":987654321,"first_name":"Your","last_name":"Name","type":"private"},"date":12345678,"text":"/start"}}]}
+```
+
+In this example, the chat ID is `987654321`.
+
+If you get an empty response, try sending the bot another message. If it's still empty, make sure the bot is not in use by another application (or node) as it will consume the message before you can grab the ID.
+
+If you wish to send messages to multiple chats, you will need to repeat the steps for grabbing each individual chat ID. Sending messages to a group has not been tested, but should be similar to the above steps.
+
+You can then use the token and chat ID to configure the nodes.
+
 ## Included Nodes
 
 You can view detailed documentation for the nodes via the node-red info pane. Just select a node and start readin'.
