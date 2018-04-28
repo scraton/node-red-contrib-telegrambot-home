@@ -6,7 +6,8 @@
     "nodes": {
       "bot": "nodes/bot-config/bot-config.js",
       "switch": "nodes/switch/switch.js",
-      "notify": "nodes/notify/notify.js"
+      "notify": "nodes/notify/notify.js",
+      "payload": "nodes/payload/payload.js"
     }
   },
   "repository": "git+https://github.com/scraton/node-red-contrib-telegrambot-home.git",
