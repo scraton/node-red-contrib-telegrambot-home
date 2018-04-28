@@ -1,18 +1,17 @@
 <script type="text/javascript">
-    // TODO: Refactor the oneditprepare and related functions so we can release this under full MIT license
-    //       Copied/inspired by: https://github.com/node-red/node-red/blob/master/nodes/core/logic/10-switch.html
-    //       All it needs to do is provide a editable list to populate node.answers, most of the logic for tracking types is unnecessary
+    // Configuration inspired by node-red's switch node
+    // https://github.com/node-red/node-red/blob/master/nodes/core/logic/10-switch.html
 
     RED.nodes.registerType('telegrambot-switch', {
         category: 'telegram',
-        color: '#e2d96e',
+        color: '#3babdd',
         icon: "switch.png",
         defaults: {
             name: { value: "" },
             bot: { value: "", type: "telegrambot-config", required: true },
             chatId: { value: "", required: true },
             question: { value: "" },
-            answers: { value: [{ v:"", vt:"str" }] },
+            answers: { value: [] },
             outputs: { value: 1 },
             autoAnswerCallback: { value: true, required: false }
         },
@@ -25,18 +24,9 @@
             return this.name ? "node_label_italic" : "";
         },
         outputLabels: function(index) {
-            function clipValueLength(v) {
-                if (v.length > 15) {
-                    return v.substring(0,15)+"...";
-                }
-                return v;
-            }
-
             var answer = this.answers[index];
-            var label = "";
-
-            if (answer && answer.vt === 'str') {
-                return clipValueLength(answer.v);
+            if (answer) {
+                return (answer.length > 15) ? `${answer.substring(0,15)}...` : answer;
             }
         },
         oneditprepare: function() {
@@ -45,55 +35,57 @@
 
             $("#node-input-answer-container").css('min-height','250px').css('min-width','450px').editableList({
                 addItem: function(container, i, opt) {
-                    if (!opt.hasOwnProperty('r')) {
-                        opt.r = {};
-                    }
-                    var answer = opt.r;
-                    if (!opt.hasOwnProperty('i')) {
-                        opt._i = Math.floor((0x99999-0x10000)*Math.random()).toString();
-                    }
-
                     container.css({
                         overflow: 'hidden',
                         whiteSpace: 'nowrap'
                     });
 
+                    if (!opt.hasOwnProperty('answer')) {
+                        opt.answer = "";
+                    }
+
+                    if (!opt.hasOwnProperty('idx')) {
+                        opt._idx = Math.floor((0x99999-0x10000)*Math.random()).toString();
+                    }
+
+                    var answer = opt.answer;
                     var row = $('<div/>').appendTo(container);
                     var valueField = $('<input/>',{class:"node-input-answer-value",type:"text",style:"margin-left: 5px;"}).appendTo(row).typedInput({default:'str',types:['str']});
                     var finalspan = $('<span/>',{style:"float: right;margin-top: 6px;"}).appendTo(row);
                     finalspan.append(' &#8594; <span class="node-input-answer-index">'+(i+1)+'</span> ');
 
-                    if (typeof answer.v != "undefined") {
-                        valueField.typedInput('value', answer.v)
-                        valueField.typedInput('type', answer.vt || 'str');
+                    if (typeof answer != "undefined") {
+                        valueField.typedInput('value', answer)
                     }
 
-                    var currentOutputs = JSON.parse(outputCount.val()||"{}");
-                    currentOutputs[opt.hasOwnProperty('i')?opt.i:opt._i] = i;
+                    var currentOutputs = JSON.parse(outputCount.val() || "{}");
+                    currentOutputs[opt.hasOwnProperty('idx') ? opt.idx : opt._idx] = i;
                     outputCount.val(JSON.stringify(currentOutputs));
                 },
                 removeItem: function(opt){
-                    var currentOutputs = JSON.parse(outputCount.val()||"{}");
-                    if (opt.hasOwnProperty('i')) {
-                        currentOutputs[opt.i] = -1;
+                    var currentOutputs = JSON.parse(outputCount.val() || "{}");
+
+                    if (opt.hasOwnProperty('idx')) {
+                        currentOutputs[opt.idx] = -1;
                     } else {
-                        delete currentOutputs[opt._i];
+                        delete currentOutputs[opt._idx];
                     }
+
                     var answers = $("#node-input-answer-container").editableList('items');
                     answers.each(function(i) {
-                        $(this).find(".node-input-answer-index").html(i+1);
+                        $(this).find(".node-input-answer-index").html(i + 1);
                         var data = $(this).data('data');
-                        currentOutputs[data.hasOwnProperty('i')?data.i:data._i] = i;
+                        currentOutputs[data.hasOwnProperty('idx') ? data.idx : data._idx] = i;
                     });
                     outputCount.val(JSON.stringify(currentOutputs));
                 },
                 sortItems: function(answers) {
-                    var currentOutputs = JSON.parse(outputCount.val()||"{}");
+                    var currentOutputs = JSON.parse(outputCount.val() || "{}");
                     var answers = $("#node-input-answer-container").editableList('items');
                     answers.each(function(i) {
-                        $(this).find(".node-input-answer-index").html(i+1);
+                        $(this).find(".node-input-answer-index").html(i + 1);
                         var data = $(this).data('data');
-                        currentOutputs[data.hasOwnProperty('i')?data.i:data._i] = i;
+                        currentOutputs[data.hasOwnProperty('idx')? data.idx : data._idx] = i;
                     });
                     outputCount.val(JSON.stringify(currentOutputs));
                 },
@@ -103,33 +95,33 @@
 
             for (var i=0; i < this.answers.length; i++) {
                 var answer = this.answers[i];
-                $("#node-input-answer-container").editableList('addItem',{r:answer,i:i});
+                $("#node-input-answer-container").editableList('addItem', { idx: i, answer: answer });
             }
         },
         oneditsave: function() {
             var answers = $("#node-input-answer-container").editableList('items');
             var node = this;
+
             node.answers = [];
 
             answers.each(function(i){
                 var answerData = $(this).data('data');
                 var answer = $(this);
-                var r = {};
+                var value = answer.find(".node-input-answer-value").typedInput('value');
 
-                r.v = answer.find(".node-input-answer-value").typedInput('value');
-                r.vt = answer.find(".node-input-answer-value").typedInput('type');
-
-                node.answers.push(r);
+                node.answers.push(value);
             });
         },
         oneditresize: function(size) {
             var rows = $("#dialog-form>div:not(.node-input-answer-container-row)");
             var height = size.height;
-            for (var i=0;i<rows.size();i++) {
+
+            for (var i = 0; i < rows.size(); i++) {
                 height -= $(rows[i]).outerHeight(true);
             }
+
             var editorRow = $("#dialog-form>div.node-input-answer-container-row");
-            height -= (parseInt(editorRow.css("marginTop"))+parseInt(editorRow.css("marginBottom")));
+            height -= (parseInt(editorRow.css("marginTop")) + parseInt(editorRow.css("marginBottom")));
             $("#node-input-answer-container").editableList('height',height);
         }
     });

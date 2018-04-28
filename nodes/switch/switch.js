@@ -90,7 +90,7 @@ module.exports = function(RED) {
 
         var chunkSize = 4000;
         var answerOpts = answers.map(function(answer, idx){
-          return { text: answer.v, callback_data: idx };
+          return { text: answer, callback_data: idx };
         });
         var options = {
           reply_markup: {
