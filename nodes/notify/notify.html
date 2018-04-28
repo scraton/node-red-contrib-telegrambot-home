@@ -1,0 +1,63 @@
+<script type="text/javascript">
+    RED.nodes.registerType("telegrambot-notify", {
+        category: "telegram",
+        paletteLabel: "notify",
+        color: "#3babdd",
+        icon: "telegram.png",
+        align: "right",
+        defaults: {
+            name: { value: "" },
+            bot: { value: "", type: "telegrambot-config", required: true },
+            chatId: { value: "", required: true },
+            message: { value: "", required: false }
+        },
+        inputs: 1,
+        outputs: 0,
+        label: function() {
+            return this.name || "telegram notify";
+        },
+        labelStyle: function() {
+            return this.name ? "node_label_italic" : "";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="telegrambot-notify">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-bot">Bot</label>
+        <input type="text" id="node-input-bot" placeholder="Bot">
+    </div>
+    <div class="form-row">
+        <label for="node-input-chatId">Chat ID</label>
+        <input type="text" id="node-input-chatId" placeholder="(e.g. 1234)">
+    </div>
+    <div class="form-row">
+        <label for="node-input-message">Message</label>
+        <input type="text" id="node-input-message" placeholder="(e.g. Your lights turned themselves on. Freaky.)">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="telegrambot-notify">
+    <p>Send a notification to a Telegram chat.</p>
+
+    <h3>Details</h3>
+    <p>When a message arrives, a message will be sent to the specified Telegram bot + chat ID. You can either enter a static message, or pass one in via the input.</p>
+
+    <dl class="message-properties">
+        <dt>Name <span class="property-type">string</span></dt>
+        <dd>Label for this node for easy reference</dd>
+
+        <dt>Bot <span class="property-type">string</span></dt>
+        <dd>Telegram bot configuration for sending the message</dd>
+
+        <dt>Chat ID <span class="property-type">int</span></dt>
+        <dd>Telegram chat ID to send the message</dd>
+
+        <dt class="optional">Message <span class="property-type">string</span></dt>
+        <dd>Optional. If provided, this message will be sent when the node triggers. If not provided, the contents of <code>msg.payload</code> will be sent.</dd>
+    </dl>
+</script>
