@@ -12,7 +12,7 @@
             name: { value: "" },
             bot: { value: "", type: "telegrambot-config", required: true },
             chatId: { value: "", required: true },
-            sendMethod: { value: "sendMessage", required: true },
+            sendMethod: { value: "sendMessage", required: false },
             payload: { value: "", required: false }
         },
         inputs: 1,
@@ -91,8 +91,7 @@
             <option value="sendVenue">sendVenue</option>
             <option value="sendContact">sendContact</option>
             <option value="sendChatAction">sendChatAction</option>
-            <option value="answerCallbackQuery">answerCallbackQuery</option>
-            <option value="editMessageReplyMarkup">editMessageReplyMarkup</option>
+            <option value="">- set by msg.method -</option>
         </select>
     </div>
     <div class="form-row node-text-editor-row">
@@ -121,8 +120,8 @@
         <dt>Chat ID <span class="property-type">int</span></dt>
         <dd>Telegram chat ID to send the message</dd>
 
-        <dt>Method <span class="property-type">enum</span></dt>
-        <dd>Telegram API method used for sending the payload</dd>
+        <dt>Method <span class="property-type">string</span></dt>
+        <dd>Telegram API method used for sending the payload. If not configured in the node, <code>msg.method</code> will be used.</dd>
 
         <dt class="optional">Payload <span class="property-type">json</span></dt>
         <dd>Optional. If provided, this payload will be sent when the node triggers. If not provided, the contents of <code>msg.payload</code> will be sent. See below for more.</dd>

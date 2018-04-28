@@ -31,13 +31,6 @@ module.exports = function(RED) {
       utils.updateNodeStatusFailed(node, "chat ID not provided");
     }
 
-    if (!this.sendMethod) {
-      utils.updateNodeStatusFailed(node, "sendMethod not provided");
-    } else if (typeof node.telegramBot[this.sendMethod] !== "function") {
-      utils.updateNodeStatusFailed(node, `sendMethod '${this.sendMethod}' is not supported`);
-      this.sendMethod = null;
-    }
-
     if (this.staticPayload && typeof this.staticPayload !== "object") {
       try {
         this.staticPayload = JSON.parse(this.staticPayload);
@@ -52,9 +45,12 @@ module.exports = function(RED) {
         utils.updateNodeStatusFailed(node, "message payload is empty");
       } else if (!node.chatId) {
         utils.updateNodeStatusFailed(node, "chat ID is empty");
-      } else if (!node.sendMethod) {
-        utils.updateNodeStatusFailed(node, "sendMethod is empty or not supported");
+      } else if (!node.sendMethod && !msg.method) {
+        utils.updateNodeStatusFailed(node, "sendMethod is empty");
+      } else if (msg.method && typeof node.telegramBot[msg.method] !== "function") {
+        utils.updateNodeStatusFailed(node, "sendMethod is not a valid method");
       } else {
+        var sendMethod = node.sendMethod || msg.method;
         var payload = node.staticPayload;
         var args = [];
 
@@ -74,7 +70,7 @@ module.exports = function(RED) {
           }
         }
 
-        switch(node.sendMethod) {
+        switch(sendMethod) {
           case "sendMessage":    args = buildArgs(node, payload, "text"); break;
           case "sendPhoto":      args = buildArgs(node, payload, "photo"); break;
           case "sendAudio":      args = buildArgs(node, payload, "audio"); break;
@@ -94,7 +90,7 @@ module.exports = function(RED) {
         }
 
         if (args.length > 0) {
-          node.telegramBot[node.sendMethod](...args).then(function(response){
+          node.telegramBot[sendMethod](...args).then(function(response){
             msg.payload = response;
             node.send(msg);
           });
