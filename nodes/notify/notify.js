@@ -16,34 +16,34 @@ module.exports = function(RED) {
     // Verify inputs
     if (!this.chatId || isNaN(this.chatId)) {
       utils.updateNodeStatusFailed(node, "chat ID not provided");
+      return;
     }
 
     this.on("input", function(msg){
       if (!(node.staticMessage || msg.payload)) {
         utils.updateNodeStatusFailed(node, "message payload is empty");
-      } else if (!node.chatId) {
-        utils.updateNodeStatusFailed(node, "chat ID is empty");
-      } else {
-        var message = node.staticMessage || msg.payload;
-        var chunkSize = 4000;
-        var done = false;
-        var messageToSend;
-
-        do {
-          if (message.length > chunkSize) {
-            messageToSend = message.substr(0, chunkSize);
-            message = message.substr(chunkSize);
-          } else {
-            messageToSend = message;
-            done = true;
-          }
-
-          node.telegramBot.sendMessage(node.chatId, messageToSend, msg.payload.options).then(function(sent){
-            msg.telegram = { sentMessageId: sent.message_id };
-            node.send(msg);
-          });
-        } while (!done);
+        return;
       }
+
+      var message = node.staticMessage || msg.payload;
+      var chunkSize = 4000;
+      var done = false;
+      var messageToSend;
+
+      do {
+        if (message.length > chunkSize) {
+          messageToSend = message.substr(0, chunkSize);
+          message = message.substr(chunkSize);
+        } else {
+          messageToSend = message;
+          done = true;
+        }
+
+        node.telegramBot.sendMessage(node.chatId, messageToSend, msg.payload.options).then(function(sent){
+          msg.telegram = { sentMessageId: sent.message_id };
+          node.send(msg);
+        });
+      } while (!done);
     });
 
     this.on("close", function(){

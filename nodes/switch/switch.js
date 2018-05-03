@@ -18,6 +18,7 @@ module.exports = function(RED) {
     // Verify inputs
     if (!this.chatId || isNaN(this.chatId)) {
       utils.updateNodeStatusFailed(node, "chat ID not provided");
+      return;
     }
 
     this.on("input", function(msg){
@@ -25,7 +26,7 @@ module.exports = function(RED) {
       var answers = this.answers || [];
       var chatId = this.chatId;
 
-      if (question && answers.length > 0 && chatId) {
+      if (question && answers.length > 0) {
         var listener = function(botMsg){
           var username = botMsg.from.username;
           var chatId = botMsg.message.chat.id;

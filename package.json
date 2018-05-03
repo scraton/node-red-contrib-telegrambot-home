@@ -5,6 +5,7 @@
   "node-red": {
     "nodes": {
       "bot": "nodes/bot-config/bot-config.js",
+      "command": "nodes/command/command.js",
       "switch": "nodes/switch/switch.js",
       "notify": "nodes/notify/notify.js",
       "payload": "nodes/payload/payload.js"

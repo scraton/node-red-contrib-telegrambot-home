@@ -29,6 +29,7 @@ module.exports = function(RED) {
     // Verify inputs
     if (!this.chatId || isNaN(this.chatId)) {
       utils.updateNodeStatusFailed(node, "chat ID not provided");
+      return;
     }
 
     if (this.staticPayload && typeof this.staticPayload !== "object") {
@@ -37,66 +38,73 @@ module.exports = function(RED) {
       } catch(ex) {
         utils.updateNodeStatusFailed(node, "staticPayload is not valid JSON");
         node.warn(ex.message);
+        return;
       }
     }
 
     this.on("input", function(msg){
       if (!(node.staticPayload || msg.payload)) {
         utils.updateNodeStatusFailed(node, "message payload is empty");
-      } else if (!node.chatId) {
-        utils.updateNodeStatusFailed(node, "chat ID is empty");
-      } else if (!node.sendMethod && !msg.method) {
+        return;
+      }
+
+      if (!node.sendMethod && !msg.method) {
         utils.updateNodeStatusFailed(node, "sendMethod is empty");
-      } else if (msg.method && typeof node.telegramBot[msg.method] !== "function") {
+        return;
+      }
+
+      if (msg.method && typeof node.telegramBot[msg.method] !== "function") {
         utils.updateNodeStatusFailed(node, "sendMethod is not a valid method");
-      } else {
-        var sendMethod = node.sendMethod || msg.method;
-        var payload = node.staticPayload;
-        var args = [];
+        return;
+      }
 
-        if (!payload && msg.payload) {
-          if (typeof msg.payload === "string") {
-            try {
-              payload = JSON.parse(msg.payload);
-            } catch(ex) {
-              utils.updateNodeStatusFailed(node, "payload is malformed");
-              node.warn(ex.message);
-            }
-          } else if (typeof msg.payload === "object") {
-            payload = msg.payload;
-          } else {
+      var sendMethod = node.sendMethod || msg.method;
+      var payload = node.staticPayload;
+      var args = [];
+
+      if (!payload && msg.payload) {
+        if (typeof msg.payload === "string") {
+          try {
+            payload = JSON.parse(msg.payload);
+          } catch(ex) {
             utils.updateNodeStatusFailed(node, "payload is malformed");
-            node.warn(`expected payload to be string or object, got ${typeof msg.payload}`);
+            node.warn(ex.message);
           }
-        }
-
-        switch(sendMethod) {
-          case "sendMessage":    args = buildArgs(node, payload, "text"); break;
-          case "sendPhoto":      args = buildArgs(node, payload, "photo"); break;
-          case "sendAudio":      args = buildArgs(node, payload, "audio"); break;
-          case "sendDocument":   args = buildArgs(node, payload, "document"); break;
-          case "sendSticker":    args = buildArgs(node, payload, "sticker"); break;
-          case "sendVideo":      args = buildArgs(node, payload, "video"); break;
-          case "sendVoice":      args = buildArgs(node, payload, "voice"); break;
-          case "sendVideoNote":  args = buildArgs(node, payload, "video_note"); break;
-          case "sendMediaGroup": args = buildArgs(node, payload, "media"); break;
-          case "sendLocation":   args = buildArgs(node, payload, "latitude", "longitude"); break;
-          case "sendVenue":      args = buildArgs(node, payload, "latitude", "longitude", "title", "address"); break;
-          case "sendContact":    args = buildArgs(node, payload, "phone_number", "first_name"); break;
-          case "sendChatAction": args = buildArgs(node, payload, "chat_action"); break;
-
-          case "answerCallbackQuery": args = buildArgs(node, payload, "callback_query_id"); break;
-          case "editMessageReplyMarkup": args = buildArgs(node, payload, "reply_markup"); break;
-        }
-
-        if (args.length > 0) {
-          node.telegramBot[sendMethod](...args).then(function(response){
-            msg.payload = response;
-            node.send(msg);
-          });
+        } else if (typeof msg.payload === "object") {
+          payload = msg.payload;
         } else {
-          node.warn("empty arguments after parsing payload");
+          utils.updateNodeStatusFailed(node, "payload is malformed");
+          node.warn(`expected payload to be string or object, got ${typeof msg.payload}`);
+          return;
         }
+      }
+
+      switch(sendMethod) {
+        case "sendMessage":    args = buildArgs(node, payload, "text"); break;
+        case "sendPhoto":      args = buildArgs(node, payload, "photo"); break;
+        case "sendAudio":      args = buildArgs(node, payload, "audio"); break;
+        case "sendDocument":   args = buildArgs(node, payload, "document"); break;
+        case "sendSticker":    args = buildArgs(node, payload, "sticker"); break;
+        case "sendVideo":      args = buildArgs(node, payload, "video"); break;
+        case "sendVoice":      args = buildArgs(node, payload, "voice"); break;
+        case "sendVideoNote":  args = buildArgs(node, payload, "video_note"); break;
+        case "sendMediaGroup": args = buildArgs(node, payload, "media"); break;
+        case "sendLocation":   args = buildArgs(node, payload, "latitude", "longitude"); break;
+        case "sendVenue":      args = buildArgs(node, payload, "latitude", "longitude", "title", "address"); break;
+        case "sendContact":    args = buildArgs(node, payload, "phone_number", "first_name"); break;
+        case "sendChatAction": args = buildArgs(node, payload, "chat_action"); break;
+
+        case "answerCallbackQuery": args = buildArgs(node, payload, "callback_query_id"); break;
+        case "editMessageReplyMarkup": args = buildArgs(node, payload, "reply_markup"); break;
+      }
+
+      if (args.length > 0) {
+        node.telegramBot[sendMethod](...args).then(function(response){
+          msg.payload = response;
+          node.send(msg);
+        });
+      } else {
+        node.warn("empty arguments after parsing payload");
       }
     });
 
