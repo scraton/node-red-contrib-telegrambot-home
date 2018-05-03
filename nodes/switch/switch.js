@@ -68,7 +68,7 @@ module.exports = function(RED) {
                 node.warn("invalid callback data received from telegram");
               }
             } else {
-              node.warn("received callback was unauthorized");
+              node.warn(`received callback in ${chatId} from '${username}' was unauthorized`);
             }
           } else {
             // This is not the listener you are looking for
