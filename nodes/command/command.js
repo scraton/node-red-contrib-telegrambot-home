@@ -8,7 +8,7 @@ module.exports = function(RED) {
     // Get base configuration
     this.bot = RED.nodes.getNode(config.bot);
     this.chatId = parseInt(config.chatId);
-    this.command = config.command;
+    this.command = { type: config.commandType || "str", value: config.command, case: config.commandCase };
 
     // Initialize bot
     utils.initializeBot(node);
@@ -19,9 +19,19 @@ module.exports = function(RED) {
       return;
     }
 
-    if (!this.command || isEmpty(this.command)) {
+    if (isEmpty(this.command.value)) {
       utils.updateNodeStatusFailed(node, "command is not provided");
       return;
+    }
+
+    if (this.command.type === "re") {
+      try {
+        this.command.value = new RegExp(this.command.value, this.command.case ? "" : "i");
+      } catch(ex) {
+        utils.updateNodeStatusFailed(node, "command is not valid regexp");
+        node.warn(ex.message);
+        return;
+      }
     }
 
     if (node.telegramBot) {
@@ -33,8 +43,6 @@ module.exports = function(RED) {
         if (node.bot.isAuthorized(chatId, username)) {
           if (matchedCommand(node.command, botMsg.text)) {
             node.send(msg);
-          } else {
-            // node.warn(`'${node.command}' did not match '${botMsg.text}'`);
           }
         } else {
           node.warn(`received unauthorized message in ${chatId} from '${username}'`);
@@ -48,8 +56,16 @@ module.exports = function(RED) {
     });
   }
 
-  function matchedCommand(a, b) {
-    return a === b;
+  function matchedCommand(command, message) {
+    if (command.type === "str" && !command.case) {
+      return command.value.localeCompare(message, undefined, { sensitivity: "base" }) === 0;
+    } else if (command.type === "str" && command.case) {
+      return command.value === message;
+    } else if (command.type == "re") {
+      return command.value.test(message);
+    } else {
+      return false;
+    }
   }
 
   function isEmpty(str) {

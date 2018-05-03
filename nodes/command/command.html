@@ -8,7 +8,9 @@
         defaults: {
             bot: { value: "", type: "telegrambot-config", required: true },
             chatId: { value: "", required: true },
-            command: { value: "", required: true }
+            command: { value: "", required: true },
+            commandType: { value: "str" },
+            commandCase: { value: true }
         },
         inputs: 0,
         outputs: 1,
@@ -17,6 +19,13 @@
         },
         labelStyle: function() {
             return this.name ? "node_label_italic" : "";
+        },
+        oneditprepare: function() {
+            $('#node-input-command').typedInput({
+                default: this.commandType || "str",
+                typeField: $("#node-input-commandType"),
+                types: ["str", "re"]
+            });
         }
     });
 </script>
@@ -32,7 +41,12 @@
     </div>
     <div class="form-row">
         <label for="node-input-command">Command</label>
-        <input type="text" id="node-input-command" placeholder="(e.g. /help)">
+        <input type="text" id="node-input-command" placeholder="(e.g. /help or /^Help$/i)" style="width: 70%">
+        <input type="hidden" id="node-input-commandType">
+    </div>
+    <div class="form-row">
+        <label for="node-input-command">Case Sensitive</label>
+        <input type="checkbox" id="node-input-commandCase" style="width:auto; vertical-align:top;">
     </div>
 </script>
 
@@ -51,5 +65,8 @@
 
         <dt>Command <span class="property-type">string</span></dt>
         <dd>The specific command or phrase that must be said in chat to initiate the flow</dd>
+
+        <dt>Case Sensitive <span class="property-type">bool</span></dt>
+        <dd>When enabled, matching command and message will be done without comparing case.</dd>
     </dl>
 </script>
