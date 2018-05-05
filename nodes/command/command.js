@@ -61,7 +61,7 @@ module.exports = function(RED) {
       return command.value.localeCompare(message, undefined, { sensitivity: "base" }) === 0;
     } else if (command.type === "str" && command.case) {
       return command.value === message;
-    } else if (command.type == "re") {
+    } else if (command.type === "re") {
       return command.value.test(message);
     } else {
       return false;
