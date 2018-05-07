@@ -79,6 +79,13 @@ All of the [Telegram API methods](https://core.telegram.org/bots/api#available-m
 ![](images/TelegramDynamicPayloadNode.png?raw=true "Dynamic Payload Function")
 ![](images/TelegramDynamicPayloadBotMessage.png?raw=true "Telegram Message")
 
+### command
+
+Initiate a flow based on a command said in the chat
+
+![](images/TelegramCommandFlow.png?raw=true "Command Flow")
+![](images/TelegramCommandBotMessage.png?raw=true "Telegram Message")
+
 ---
 ## Development
 
