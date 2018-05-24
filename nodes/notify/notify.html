@@ -9,7 +9,8 @@
             name: { value: "" },
             bot: { value: "", type: "telegrambot-config", required: true },
             chatId: { value: "", required: true },
-            message: { value: "", required: false }
+            message: { value: "", required: false },
+            parseMode: { value: "", required: false }
         },
         inputs: 1,
         outputs: 0,
@@ -36,6 +37,14 @@
         <input type="text" id="node-input-chatId" placeholder="(e.g. 1234)">
     </div>
     <div class="form-row">
+        <label for="node-input-parseMode">Parse Mode</label>
+        <select id="node-input-parseMode">
+            <option value="">Plain Text</option>
+            <option value="Markdown">Markdown</option>
+            <option value="HTML">HTML</option>
+        </select>
+    </div>
+    <div class="form-row">
         <label for="node-input-message">Message</label>
         <input type="text" id="node-input-message" placeholder="(e.g. Your lights turned themselves on. Freaky.)">
     </div>
@@ -56,6 +65,9 @@
 
         <dt>Chat ID <span class="property-type">int</span></dt>
         <dd>Telegram chat ID to send the message</dd>
+
+        <dt>Parse Mode <span class="property-type">enum</span></dt>
+        <dd>How the Telegram client should parse the message. Can be plain text, <a href="https://core.telegram.org/bots/api/#markdown-style" target="_blank" rel="noopener noreferrer">Markdown</a>, or <a href="https://core.telegram.org/bots/api/#html-style" target="_blank" rel="noopener noreferrer">HTML</a>.</dd>
 
         <dt class="optional">Message <span class="property-type">string</span></dt>
         <dd>Optional. If provided, this message will be sent when the node triggers. If not provided, the contents of <code>msg.payload</code> will be sent.</dd>

@@ -8,6 +8,7 @@ module.exports = function(RED) {
     // Get base configuration
     this.bot = RED.nodes.getNode(config.bot);
     this.chatId = parseInt(config.chatId);
+    this.parseMode = config.parseMode;
     this.staticMessage = config.message;
 
     // Initialize bot
@@ -29,6 +30,7 @@ module.exports = function(RED) {
       var chunkSize = 4000;
       var done = false;
       var messageToSend;
+      var options = { parse_mode: node.parseMode };
 
       do {
         if (message.length > chunkSize) {
@@ -39,7 +41,7 @@ module.exports = function(RED) {
           done = true;
         }
 
-        node.telegramBot.sendMessage(node.chatId, messageToSend, msg.payload.options).then(function(sent){
+        node.telegramBot.sendMessage(node.chatId, messageToSend, options).then(function(sent){
           msg.telegram = { sentMessageId: sent.message_id };
           node.send(msg);
         });
