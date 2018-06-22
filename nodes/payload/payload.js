@@ -77,6 +77,13 @@ module.exports = function(RED) {
           node.warn(`expected payload to be string or object, got ${typeof msg.payload}`);
           return;
         }
+      } else {
+        try {
+          payload = JSON.parse(JSON.stringify(payload));
+        } catch (ex) {
+          utils.updateNodeStatusFailed(node, "payload is malformed");
+          node.warn(ex.message);
+        }
       }
 
       switch(sendMethod) {
