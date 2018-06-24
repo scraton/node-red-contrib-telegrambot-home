@@ -7,18 +7,12 @@ module.exports = function(RED) {
 
     // Get base configuration
     this.bot = RED.nodes.getNode(config.bot);
-    this.chatId = parseInt(config.chatId);
     this.command = { type: config.commandType || "str", value: config.command, case: config.commandCase };
 
     // Initialize bot
     utils.initializeBot(node);
 
     // Verify inputs
-    if (!this.chatId || isNaN(this.chatId)) {
-      utils.updateNodeStatusFailed(node, "chat ID not provided");
-      return;
-    }
-
     if (isEmpty(this.command.value)) {
       utils.updateNodeStatusFailed(node, "command is not provided");
       return;
