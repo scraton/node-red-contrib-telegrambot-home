@@ -10,6 +10,9 @@ module.exports = function(RED) {
     this.chatId = parseInt(config.chatId);
     this.question = config.question || "";
     this.answers = config.answers || [];
+    this.timeoutValue = config.timeoutValue || null;
+    this.timeoutUnits = config.timeoutUnits || null;
+    this.timeoutCallback = null;
     this.autoAnswerCallback = config.autoAnswerCallback;
 
     // Initialize bot
@@ -19,6 +22,25 @@ module.exports = function(RED) {
     if (!this.chatId || isNaN(this.chatId)) {
       utils.updateNodeStatusFailed(node, "chat ID not provided");
       return;
+    }
+
+    if (this.timeoutValue !== null) {
+      if (this.timeoutUnits === null) {
+        utils.updateNodeStatusFailed(node, "timeout units not provided");
+        return;
+      }
+
+      this.timeoutDuration = utils.timeUnits(parseInt(this.timeoutValue, 10), this.timeoutUnits);
+
+      if (this.timeoutDuration === NaN) {
+        utils.updateNodeStatusFailed(node, "timeout not parsable");
+        return;
+      }
+
+      if (this.timeoutDuration <= 0) {
+        utils.updateNodeStatusFailed(node, "timeout should be greater than 0");
+        return;
+      }
     }
 
     this.on("input", function(msg){
@@ -37,6 +59,14 @@ module.exports = function(RED) {
             if (node.bot.isAuthorized(chatId, username)) {
               // Remove this listener since we got our reply
               node.telegramBot.removeListener("callback_query", listener);
+
+              // Clear the timeout
+              if (node.timeoutCallback) {
+                clearTimeout(node.timeoutCallback);
+              }
+
+              // Update node status
+              utils.updateNodeStatusSuccess(node);
 
               if (node.autoAnswerCallback) {
                 // Answer the callback so progress can stop showing
@@ -76,6 +106,23 @@ module.exports = function(RED) {
           }
         };
 
+        var timeoutListener = function(sentMsg){
+          utils.updateNodeStatus(node, "yellow", "dot", "timed out waiting for reply");
+
+          // Remove this listener
+          node.telegramBot.removeListener("callback_query", listener);
+
+          var messageId = sentMsg.message_id;
+          var chatId = sentMsg.chat.id;
+
+          // Remove reply keyboard from message
+          if (messageId && chatId) {
+            node.telegramBot.editMessageReplyMarkup("{}", { chat_id: chatId, message_id: messageId }).then(function(sent){
+              // nothing to do here
+            });
+          }
+        };
+
 
         var chunkSize = 4000;
         var answerOpts = answers.map(function(answer, idx){
@@ -88,11 +135,20 @@ module.exports = function(RED) {
         };
 
         if (question.length > chunkSize) {
-          utils.updateNodeStatusFailed("message larger than allowed chunk size");
+          utils.updateNodeStatusFailed(node, "message larger than allowed chunk size");
         } else {
           node.telegramBot.sendMessage(chatId, question, options).then(function(sent){
             // Store sent message so we know how to respond later
             msg.telegram = { chatId: chatId, messageId: sent.message_id };
+
+            if (node.timeoutDuration > 0) {
+              node.timeoutCallback = setTimeout(function(){
+                timeoutListener(sent);
+              }, node.timeoutDuration);
+              utils.updateNodeStatusPending(node, `waiting for reply (${node.timeoutValue}${node.timeoutUnits})`);
+            } else {
+              utils.updateNodeStatusPending(node, "waiting for reply");
+            }
           });
 
           node.telegramBot.on("callback_query", listener);

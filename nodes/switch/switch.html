@@ -14,7 +14,9 @@
             question: { value: "" },
             answers: { value: [] },
             outputs: { value: 1 },
-            autoAnswerCallback: { value: true, required: false }
+            autoAnswerCallback: { value: true, required: false },
+            timeoutValue: { value: null },
+            timeoutUnits: { value: null }
         },
         inputs: 1,
         outputs: 1,
@@ -33,6 +35,15 @@
         oneditprepare: function() {
             var node = this;
             var outputCount = $("#node-input-outputs").val("{}");
+
+            $("#node-input-timeoutUnits").change(function(){
+                if ($(this).val() == "") {
+                    $("#node-input-timeoutValue").val("");
+                    $("#node-input-timeoutValue").prop("disabled", true);
+                } else {
+                    $("#node-input-timeoutValue").prop("disabled", false);
+                }
+            });
 
             $("#node-input-answer-container").css("min-height","250px").css("min-width","450px").editableList({
                 addItem: function(container, i, opt) {
@@ -141,6 +152,17 @@
         <label for="node-input-chatId">Chat ID</label>
         <input type="text" id="node-input-chatId" placeholder="(e.g. 1234)">
     </div>
+    <div class="form-row node-type-duration">
+        <label>Timeout</label>
+        <input type="text" id="node-input-timeoutValue" style="text-align:end; width:70px !important">
+        <select id="node-input-timeoutUnits" style="width:140px !important">
+            <option value="">disabled</option>
+            <option value="ms">milliseconds</option>
+            <option value="s">seconds</option>
+            <option value="min">minutes</option>
+            <option value="hr">hours</option>
+        </select>
+    </div>
     <div class="form-row">
         <label for="node-input-autoAnswerCallback">Auto-Answer</label>
         <input type="checkbox" id="node-input-autoAnswerCallback" style="display:inline-block; width:auto; vertical-align:top;">
@@ -175,6 +197,9 @@
 
         <dt class="optional">Auto-Answer <span class="property-type">list</span></dt>
         <dd>When enabled, automatically respond to the Telegram callback to resolve it as finished. Otherwise, you will have to send a payload to Telegram yourself to mark the request as complete.</dd>
+
+        <dt class="optional">Timeout <span class="property-type">int</span></dt>
+        <dd>If provided, the message will time out after the specific time in milliseconds and the reply options will be removed from the chat.</dd>
 
         <dt class="optional">Question <span class="property-type">string</span></dt>
         <dd>Question to ask the user. If not provided, <code>msg.payload</code> will be used.</dd>
