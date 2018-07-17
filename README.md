@@ -46,6 +46,7 @@ You can view detailed documentation for the nodes via the node-red info pane. Ju
 * [switch](#switch)
 * [notify](#notify)
 * [payload](#payload)
+* [command](#command)
 
 ### switch
 
