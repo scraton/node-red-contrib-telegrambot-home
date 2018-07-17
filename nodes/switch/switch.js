@@ -43,6 +43,14 @@ module.exports = function(RED) {
       }
     }
 
+    // Compute output ports
+    var portCount = (this.timeoutValue === null) ? this.answers.length : this.answers.length + 1;
+    var ports = new Array(portCount);
+
+    for (var i = 0; i < portCount; i++) {
+      ports[i] = null;
+    }
+
     this.on("input", function(msg){
       var question = this.question || msg.payload;
       var answers = this.answers || [];
@@ -84,17 +92,12 @@ module.exports = function(RED) {
               msg.telegram.callbackQueryId = callbackQueryId;
 
               // Continue with the original message
-              var portCount = answers.length;
-              var ports = new Array(portCount);
+              var outPorts = ports.slice(0);
               var outputPort = parseInt(botMsg.data);
 
-              for (var i = 0; i < portCount; i++) {
-                ports[i] = null;
-              }
-
               if (!isNaN(outputPort) && outputPort < portCount) {
-                ports[outputPort] = msg;
-                node.send(ports);
+                outPorts[outputPort] = msg;
+                node.send(outPorts);
               } else {
                 node.warn("invalid callback data received from telegram");
               }
@@ -121,6 +124,12 @@ module.exports = function(RED) {
               // nothing to do here
             });
           }
+
+          // output to timeout
+          var outPorts = ports.slice(0);
+          var outputPort = portCount - 1;
+          outPorts[outputPort] = msg;
+          node.send(outPorts);
         };
 
 

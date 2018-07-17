@@ -1,6 +1,7 @@
 <script type="text/javascript">
     // Configuration inspired by node-red's switch node
     // https://github.com/node-red/node-red/blob/master/nodes/core/logic/10-switch.html
+    var timeoutIdx = 99999;
 
     RED.nodes.registerType("telegrambot-switch", {
         category: "telegram",
@@ -27,9 +28,11 @@
             return this.name ? "node_label_italic" : "";
         },
         outputLabels: function(index) {
-            var answer = this.answers[index];
-            if (answer) {
+            if (index < this.answers.length) {
+                var answer = this.answers[index];
                 return (answer.length > 15) ? `${answer.substring(0,15)}...` : answer;
+            } else {
+                return "timeout";
             }
         },
         oneditprepare: function() {
@@ -40,8 +43,16 @@
                 if ($(this).val() == "") {
                     $("#node-input-timeoutValue").val("");
                     $("#node-input-timeoutValue").prop("disabled", true);
+
+                    var currentOutputs = JSON.parse(outputCount.val() || "{}");
+                    delete currentOutputs[timeoutIdx];
+                    outputCount.val(JSON.stringify(currentOutputs));
                 } else {
                     $("#node-input-timeoutValue").prop("disabled", false);
+
+                    var currentOutputs = JSON.parse(outputCount.val() || "{}");
+                    currentOutputs[timeoutIdx] = timeoutIdx;
+                    outputCount.val(JSON.stringify(currentOutputs));
                 }
             });
 
@@ -221,4 +232,6 @@
         <dt>callbackQueryId <span class="property-type">string</span></dt>
         <dd>The ID of the callback query. Useful if you decided to not auto-answer the callback.</dd>
     </dl>
+
+    <p>In the case of a timeout, the original message is sent to the last output labeled "timeout". Please note that in the case that Node-RED restarts, the timeout will silently fail.</p>
 </script>
