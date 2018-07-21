@@ -1,7 +1,7 @@
 var utils = require('../../lib/utils.js');
 
 module.exports = function(RED) {
-  function buildArgs(node, payload, ...keys) {
+  function buildArgs(chatId, payload, ...keys) {
     var values = [];
     var n = keys.length;
 
@@ -10,7 +10,7 @@ module.exports = function(RED) {
       delete payload[keys[i]];
     }
 
-    return [node.chatId, ...values, payload];
+    return [chatId, ...values, payload];
   }
 
   function PayloadNode(config) {
@@ -27,9 +27,8 @@ module.exports = function(RED) {
     utils.initializeBot(node);
 
     // Verify inputs
-    if (!this.chatId || isNaN(this.chatId)) {
-      utils.updateNodeStatusFailed(node, "chat ID not provided");
-      return;
+    if (isNaN(this.chatId)) {
+      this.chatId = null;
     }
 
     if (this.staticPayload && typeof this.staticPayload !== "object") {
@@ -48,6 +47,11 @@ module.exports = function(RED) {
         return;
       }
 
+      if (!utils.validateChatId(node, msg)) {
+        utils.updateNodeStatusFailed(node, "message has no chatID");
+        return;
+      }
+
       if (!node.sendMethod && !msg.method) {
         utils.updateNodeStatusFailed(node, "sendMethod is empty");
         return;
@@ -58,6 +62,7 @@ module.exports = function(RED) {
         return;
       }
 
+      var chatId = node.chatId || msg.telegram.chat.id;
       var sendMethod = node.sendMethod || msg.method;
       var payload = node.staticPayload;
       var args = [];
@@ -87,22 +92,22 @@ module.exports = function(RED) {
       }
 
       switch(sendMethod) {
-        case "sendMessage":    args = buildArgs(node, payload, "text"); break;
-        case "sendPhoto":      args = buildArgs(node, payload, "photo"); break;
-        case "sendAudio":      args = buildArgs(node, payload, "audio"); break;
-        case "sendDocument":   args = buildArgs(node, payload, "document"); break;
-        case "sendSticker":    args = buildArgs(node, payload, "sticker"); break;
-        case "sendVideo":      args = buildArgs(node, payload, "video"); break;
-        case "sendVoice":      args = buildArgs(node, payload, "voice"); break;
-        case "sendVideoNote":  args = buildArgs(node, payload, "video_note"); break;
-        case "sendMediaGroup": args = buildArgs(node, payload, "media"); break;
-        case "sendLocation":   args = buildArgs(node, payload, "latitude", "longitude"); break;
-        case "sendVenue":      args = buildArgs(node, payload, "latitude", "longitude", "title", "address"); break;
-        case "sendContact":    args = buildArgs(node, payload, "phone_number", "first_name"); break;
-        case "sendChatAction": args = buildArgs(node, payload, "chat_action"); break;
+        case "sendMessage":    args = buildArgs(chatId, payload, "text"); break;
+        case "sendPhoto":      args = buildArgs(chatId, payload, "photo"); break;
+        case "sendAudio":      args = buildArgs(chatId, payload, "audio"); break;
+        case "sendDocument":   args = buildArgs(chatId, payload, "document"); break;
+        case "sendSticker":    args = buildArgs(chatId, payload, "sticker"); break;
+        case "sendVideo":      args = buildArgs(chatId, payload, "video"); break;
+        case "sendVoice":      args = buildArgs(chatId, payload, "voice"); break;
+        case "sendVideoNote":  args = buildArgs(chatId, payload, "video_note"); break;
+        case "sendMediaGroup": args = buildArgs(chatId, payload, "media"); break;
+        case "sendLocation":   args = buildArgs(chatId, payload, "latitude", "longitude"); break;
+        case "sendVenue":      args = buildArgs(chatId, payload, "latitude", "longitude", "title", "address"); break;
+        case "sendContact":    args = buildArgs(chatId, payload, "phone_number", "first_name"); break;
+        case "sendChatAction": args = buildArgs(chatId, payload, "chat_action"); break;
 
-        case "answerCallbackQuery": args = buildArgs(node, payload, "callback_query_id"); break;
-        case "editMessageReplyMarkup": args = buildArgs(node, payload, "reply_markup"); break;
+        case "answerCallbackQuery": args = buildArgs(chatId, payload, "callback_query_id"); break;
+        case "editMessageReplyMarkup": args = buildArgs(chatId, payload, "reply_markup"); break;
       }
 
       if (args.length > 0) {

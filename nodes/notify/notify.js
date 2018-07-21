@@ -15,9 +15,8 @@ module.exports = function(RED) {
     utils.initializeBot(node);
 
     // Verify inputs
-    if (!this.chatId || isNaN(this.chatId)) {
-      utils.updateNodeStatusFailed(node, "chat ID not provided");
-      return;
+    if (isNaN(this.chatId)) {
+      this.chatId = null;
     }
 
     this.on("input", function(msg){
@@ -26,6 +25,12 @@ module.exports = function(RED) {
         return;
       }
 
+      if (!utils.validateChatId(node, msg)) {
+        utils.updateNodeStatusFailed(node, "message has no chatID");
+        return;
+      }
+
+      var chatId = node.chatId || msg.telegram.chat.id;
       var message = node.staticMessage || msg.payload;
       var chunkSize = 4000;
       var done = false;
@@ -41,7 +46,7 @@ module.exports = function(RED) {
           done = true;
         }
 
-        node.telegramBot.sendMessage(node.chatId, messageToSend, options).then(function(sent){
+        node.telegramBot.sendMessage(chatId, messageToSend, options).then(function(sent){
           msg.telegram = { sentMessageId: sent.message_id };
           node.send(msg);
         });

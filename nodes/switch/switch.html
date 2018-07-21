@@ -11,7 +11,7 @@
         defaults: {
             name: { value: "" },
             bot: { value: "", type: "telegrambot-config", required: true },
-            chatId: { value: "", required: true },
+            chatId: { value: "", required: false },
             question: { value: "" },
             answers: { value: [] },
             outputs: { value: 1 },
@@ -203,8 +203,8 @@
         <dt>Bot <span class="property-type">string</span></dt>
         <dd>Telegram bot configuration for sending the message</dd>
 
-        <dt>Chat ID <span class="property-type">int</span></dt>
-        <dd>Telegram chat ID to send the question</dd>
+        <dt class="optional">Chat ID <span class="property-type">int</span></dt>
+        <dd>Optional. Telegram chat ID to send the message. Specify a value to have this node send to the same chat every time. Leave blank to allow passing in the chat ID via <code>msg.telegram.chat.id</code>.</dd>
 
         <dt class="optional">Auto-Answer <span class="property-type">list</span></dt>
         <dd>When enabled, automatically respond to the Telegram callback to resolve it as finished. Otherwise, you will have to send a payload to Telegram yourself to mark the request as complete.</dd>

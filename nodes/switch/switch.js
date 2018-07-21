@@ -19,9 +19,8 @@ module.exports = function(RED) {
     utils.initializeBot(node);
 
     // Verify inputs
-    if (!this.chatId || isNaN(this.chatId)) {
-      utils.updateNodeStatusFailed(node, "chat ID not provided");
-      return;
+    if (isNaN(this.chatId)) {
+      this.chatId = null;
     }
 
     if (this.timeoutValue !== null) {
@@ -52,18 +51,23 @@ module.exports = function(RED) {
     }
 
     this.on("input", function(msg){
-      var question = this.question || msg.payload;
-      var answers = this.answers || [];
-      var chatId = this.chatId;
+      if (!utils.validateChatId(node, msg)) {
+        utils.updateNodeStatusFailed(node, "message has no chatID");
+        return;
+      }
+
+      var chatId = node.chatId || msg.telegram.chat.id;
+      var question = node.question || msg.payload;
+      var answers = node.answers || [];
 
       if (question && answers.length > 0) {
         var listener = function(botMsg){
           var username = botMsg.from.username;
-          var chatId = botMsg.message.chat.id;
+          var fromChatId = botMsg.message.chat.id;
           var messageId = botMsg.message.message_id;
           var callbackQueryId = botMsg.id;
 
-          if (botMsg.data && chatId === node.chatId && messageId === msg.telegram.messageId) {
+          if (botMsg.data && fromChatId === chatId && messageId === msg.telegram.messageId) {
             if (node.bot.isAuthorized(chatId, username)) {
               // Remove this listener since we got our reply
               node.telegramBot.removeListener("callback_query", listener);
@@ -116,11 +120,11 @@ module.exports = function(RED) {
           node.telegramBot.removeListener("callback_query", listener);
 
           var messageId = sentMsg.message_id;
-          var chatId = sentMsg.chat.id;
+          var sentChatId = sentMsg.chat.id;
 
           // Remove reply keyboard from message
-          if (messageId && chatId) {
-            node.telegramBot.editMessageReplyMarkup("{}", { chat_id: chatId, message_id: messageId }).then(function(sent){
+          if (messageId && sentChatId) {
+            node.telegramBot.editMessageReplyMarkup("{}", { chat_id: sentChatId, message_id: messageId }).then(function(sent){
               // nothing to do here
             });
           }

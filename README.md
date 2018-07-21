@@ -87,6 +87,8 @@ Initiate a flow based on a command said in the chat
 ![](images/TelegramCommandFlow.png?raw=true "Command Flow")
 ![](images/TelegramCommandBotMessage.png?raw=true "Telegram Message")
 
+Command nodes can also be configured for multi-chat flows. All other nodes are compatible and will route the message to the originating chat automatically. Simply leave the chat ID blank on the other nodes to enable this feature (and ensure the other chat IDs are authorized).
+
 ---
 ## Development
 
