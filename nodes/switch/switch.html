@@ -192,7 +192,7 @@
     <p>Route messages based on a response from a user via Telegram</p>
 
     <h3>Details</h3>
-    <p>When a message arrives, a message will be sent to the specified Telegram bot + chat ID with 
+    <p>When a message arrives, a message will be sent to the specified Telegram bot + chat ID with
        the configured answers presented as quick reply options. When the user selects a reply, the
        message will be forwarded to the corresponding output.</p>
 
@@ -220,17 +220,19 @@
     </dl>
 
     <h3>Outputs</h3>
-    <p>The original message is sent back out the appropriate output based on the answer received from Telegram but with the addition of a <code>msg.telegram</code> object. The keys of this object are described below.</p>
 
     <dl class="message-properties">
-        <dt>chatId <span class="property-type">int</span></dt>
-        <dd>The chat ID the messages are being sent/received in.</dd>
+        <dt>payload</dt>
+        <dd>The original message that entered the node.</dd>
 
-        <dt>messageId <span class="property-type">int</span></dt>
-        <dd>The ID of the message that was sent prompting for a response.</dd>
+        <dt>telegram</dt>
+        <dd>Telegram metadata of the sent message.</dd>
 
-        <dt>callbackQueryId <span class="property-type">string</span></dt>
-        <dd>The ID of the callback query. Useful if you decided to not auto-answer the callback.</dd>
+        <dt>chatId <span class="property-type">deprecated</span></dt>
+        <dd>The chat ID the messages are being sent/received in. Use <code>msg.telegram.chat.id</code> instead.</dd>
+
+        <dt>messageId <span class="property-type">deprecated</span></dt>
+        <dd>The ID of the message that was sent prompting for a response. Use <code>msg.telegram.message_id</code> instead.</dd>
     </dl>
 
     <p>In the case of a timeout, the original message is sent to the last output labeled "timeout". Please note that in the case that Node-RED restarts, the timeout will silently fail.</p>

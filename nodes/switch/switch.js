@@ -152,7 +152,9 @@ module.exports = function(RED) {
         } else {
           node.telegramBot.sendMessage(chatId, question, options).then(function(sent){
             // Store sent message so we know how to respond later
-            msg.telegram = { chatId: chatId, messageId: sent.message_id };
+            msg.telegram = sent;
+            msg.telegram.chatId = chatId; // deprecated
+            msg.telegram.messageId = sent.message_id; // deprecated
 
             if (node.timeoutDuration > 0) {
               node.timeoutCallback = setTimeout(function(){
