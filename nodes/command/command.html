@@ -48,8 +48,6 @@
 <script type="text/x-red" data-help-name="telegrambot-command">
     <p>Outputs message payload once a specific command is said in chat.</p>
 
-    <p><strong>Deprecation notice:</strong> In the next version, this node's output of <code>msg.payload</code> will only be the text of the message sent in Telegram. To preserve compatability with the next version, use <code>msg.telegram</code> instead.</p>
-
     <h3>Details</h3>
     <p>When a certain command or phrase is said in the specified chat, a message is output containing the Telegram API's message payload.</p>
 
@@ -68,5 +66,7 @@
     </dl>
 
     <h3>Outputs</h3>
-    <p>The original Telegram message object is passed as both <code>msg.payload</code> and <code>msg.telegram</code>.</p>
+    <p>The message sent by the user is passed as <code>msg.payload</code>.</p>
+
+    <p>The original Telegram message object is passed as <code>msg.telegram</code>.</p>
 </script>

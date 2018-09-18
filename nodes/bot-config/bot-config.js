@@ -5,9 +5,6 @@ module.exports = function(RED) {
     RED.nodes.createNode(this, n);
     var node = this;
 
-    // Deprecation notices to be shown only once at boot
-    node.warn('Deprecation notice: The telegram command node will change in the next version. See command node info for more details.');
-
     this.botname = n.botname;
     this.status = "disconnected";
     this.usernames = (n.usernames) ? n.usernames.split(",") : [];

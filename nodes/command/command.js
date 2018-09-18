@@ -30,7 +30,7 @@ module.exports = function(RED) {
 
     if (node.telegramBot) {
       node.telegramBot.on('message', function(botMsg){
-        var msg = { payload: botMsg, telegram: botMsg };
+        var msg = { payload: botMsg.text, telegram: botMsg };
         var chatId = botMsg.chat.id;
         var username = botMsg.from.username;
 
