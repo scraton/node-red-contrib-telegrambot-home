@@ -6,6 +6,7 @@
         icon: "telegram.png",
         align: "left",
         defaults: {
+            name: { value: "" },
             bot: { value: "", type: "telegrambot-config", required: true },
             command: { value: "", required: true },
             commandType: { value: "str" },
@@ -30,6 +31,10 @@
 </script>
 
 <script type="text/x-red" data-template-name="telegrambot-command">
+     <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
     <div class="form-row">
         <label for="node-input-bot">Bot</label>
         <input type="text" id="node-input-bot" placeholder="Bot">
