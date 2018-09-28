@@ -7,7 +7,7 @@ module.exports = function(RED) {
 
     this.botname = n.botname;
     this.status = "disconnected";
-    this.usernames = (n.usernames) ? n.usernames.split(",") : [];
+    this.usernames = (n.usernames) ? n.usernames.split(",").map(function(u){ return u.trim(); }) : [];
     this.chatIds = (n.chatIds) ? n.chatIds.split(",").map(function(id){ return parseInt(id); }) : [];
     this.pollInterval = parseInt(n.pollInterval);
     this.nodes = [];
