@@ -16,6 +16,7 @@
             answers: { value: [] },
             outputs: { value: 1 },
             autoAnswerCallback: { value: true, required: false },
+            verticalAnswersCallback: { value: false, required: false },
             timeoutValue: { value: null },
             timeoutUnits: { value: null }
         },
@@ -182,6 +183,10 @@
         <label for="node-input-question">Question</label>
         <input type="text" id="node-input-question" placeholder="(e.g. Should I continue?)">
     </div>
+    <div class="form-row">
+        <label for="node-input-verticalAnswersCallback">Vertical Answers</label>
+        <input type="checkbox" id="node-input-verticalAnswersCallback" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
     <div class="form-row node-input-answer-container-row">
         <input type="hidden" id="node-input-outputs"/>
         <ol id="node-input-answer-container"></ol>
@@ -214,6 +219,9 @@
 
         <dt class="optional">Question <span class="property-type">string</span></dt>
         <dd>Question to ask the user. If not provided, <code>msg.payload</code> will be used.</dd>
+
+        <dt class="optional">Vertical Answers <span class="property-type">list</span></dt>
+        <dd>When enabled, answers will be displayed vertically. Otherwise, it will be displayed horizontally.</dd>
 
         <dt>Answers <span class="property-type">list</span></dt>
         <dd>The answer choices to present the user. Each answer will correspond to its designated output.</dd>
