@@ -16,7 +16,7 @@
             answers: { value: [] },
             outputs: { value: 1 },
             autoAnswerCallback: { value: true, required: false },
-            verticalAnswersCallback: { value: false, required: false },
+            verticalAnswers: { value: false, required: false },
             timeoutValue: { value: null },
             timeoutUnits: { value: null }
         },
@@ -164,6 +164,10 @@
         <label for="node-input-chatId">Chat ID</label>
         <input type="text" id="node-input-chatId" placeholder="(e.g. 1234)">
     </div>
+    <div class="form-row">
+        <label for="node-input-question">Question</label>
+        <input type="text" id="node-input-question" placeholder="(e.g. Should I continue?)">
+    </div>
     <div class="form-row node-type-duration">
         <label>Timeout</label>
         <input type="text" id="node-input-timeoutValue" style="text-align:end; width:70px !important">
@@ -180,12 +184,8 @@
         <input type="checkbox" id="node-input-autoAnswerCallback" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
     <div class="form-row">
-        <label for="node-input-question">Question</label>
-        <input type="text" id="node-input-question" placeholder="(e.g. Should I continue?)">
-    </div>
-    <div class="form-row">
-        <label for="node-input-verticalAnswersCallback">Vertical Answers</label>
-        <input type="checkbox" id="node-input-verticalAnswersCallback" style="display:inline-block; width:auto; vertical-align:top;">
+        <label for="node-input-verticalAnswers">Vertical Answers</label>
+        <input type="checkbox" id="node-input-verticalAnswers" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
     <div class="form-row node-input-answer-container-row">
         <input type="hidden" id="node-input-outputs"/>
