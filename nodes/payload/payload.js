@@ -106,6 +106,7 @@ module.exports = function(RED) {
         case "sendContact":    args = buildArgs(chatId, payload, "phone_number", "first_name"); break;
         case "sendChatAction": args = buildArgs(chatId, payload, "chat_action"); break;
 
+        case "deleteMessage": args = buildArgs(chatId, payload, "message_id"); break;
         case "answerCallbackQuery": args = buildArgs(chatId, payload, "callback_query_id"); break;
         case "editMessageReplyMarkup": args = buildArgs(chatId, payload, "reply_markup"); break;
       }
