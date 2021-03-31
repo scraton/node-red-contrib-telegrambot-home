@@ -14,6 +14,7 @@ module.exports = function(RED) {
     this.timeoutUnits = config.timeoutUnits || null;
     this.timeoutCallback = null;
     this.autoAnswerCallback = config.autoAnswerCallback;
+    this.verticalAnswers = config.verticalAnswers;
 
     // Initialize bot
     utils.initializeBot(node);
@@ -139,11 +140,12 @@ module.exports = function(RED) {
 
         var chunkSize = 4000;
         var answerOpts = answers.map(function(answer, idx){
-          return { text: answer, callback_data: idx };
+          var answer = { text: answer, callback_data: idx };
+          return node.verticalAnswers ? [answer] : answer;
         });
         var options = {
           reply_markup: {
-            inline_keyboard: [answerOpts]
+            inline_keyboard: node.verticalAnswers ? answerOpts : [answerOpts]
           }
         };
 
