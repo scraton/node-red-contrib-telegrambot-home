@@ -301,8 +301,9 @@ jsprim@^1.2.2:
     verror "1.10.0"
 
 lodash@^4.13.1:
-  version "4.17.19"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.19.tgz#e48ddedbe30b3321783c5b4301fbd353bc1e4a4b"
+  version "4.17.21"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
+  integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
 mime-db@~1.33.0:
   version "1.33.0"
@@ -322,10 +323,10 @@ ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
 
-node-telegram-bot-api@^0.52.0:
-  version "0.52.0"
-  resolved "https://registry.yarnpkg.com/node-telegram-bot-api/-/node-telegram-bot-api-0.52.0.tgz#ebe7947f78545dcd8b0bc162c0ec7b3e839c442a"
-  integrity sha512-HOOHJ14OcuAWcVZQb5kth2lrWJeeOdaO7XFdYXcJT9Dxpznm7iZDHBq9ODLknDTE4dhDMDL6TsjjgYV468gtDQ==
+node-telegram-bot-api@^0.54.0:
+  version "0.54.0"
+  resolved "https://registry.yarnpkg.com/node-telegram-bot-api/-/node-telegram-bot-api-0.54.0.tgz#1a857ddeb2f523d81c8e10a1b70169c7cf069ff5"
+  integrity sha512-ckrpY/ABFLwA1DUzEc9iEQtsgQs8WcGC6m7iJ1bbnH+c7EOLnMdCfw+hUesyfuwOfAkkECYFxvoW4lJNy+Oztw==
   dependencies:
     array.prototype.findindex "^2.0.2"
     bl "^1.2.3"
