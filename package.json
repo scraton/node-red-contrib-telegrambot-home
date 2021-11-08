@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-telegrambot-home",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "Useful nodes for connecting your home to Telegram",
   "node-red": {
     "nodes": {
