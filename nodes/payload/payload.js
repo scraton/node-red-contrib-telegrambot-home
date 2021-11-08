@@ -10,6 +10,10 @@ module.exports = function(RED) {
       delete payload[keys[i]];
     }
 
+    if (chatId === undefined) {
+      return [...values, payload];
+    }
+
     return [chatId, ...values, payload];
   }
 
@@ -92,23 +96,31 @@ module.exports = function(RED) {
       }
 
       switch(sendMethod) {
+        case "sendAudio":      args = buildArgs(chatId, payload, "audio"); break;
+        case "sendChatAction": args = buildArgs(chatId, payload, "chat_action"); break;
+        case "sendContact":    args = buildArgs(chatId, payload, "phone_number", "first_name"); break;
+        case "sendDocument":   args = buildArgs(chatId, payload, "document"); break;
+        case "sendLocation":   args = buildArgs(chatId, payload, "latitude", "longitude"); break;
+        case "sendMediaGroup": args = buildArgs(chatId, payload, "media"); break;
         case "sendMessage":    args = buildArgs(chatId, payload, "text"); break;
         case "sendPhoto":      args = buildArgs(chatId, payload, "photo"); break;
-        case "sendAudio":      args = buildArgs(chatId, payload, "audio"); break;
-        case "sendDocument":   args = buildArgs(chatId, payload, "document"); break;
         case "sendSticker":    args = buildArgs(chatId, payload, "sticker"); break;
-        case "sendVideo":      args = buildArgs(chatId, payload, "video"); break;
-        case "sendVoice":      args = buildArgs(chatId, payload, "voice"); break;
-        case "sendVideoNote":  args = buildArgs(chatId, payload, "video_note"); break;
-        case "sendMediaGroup": args = buildArgs(chatId, payload, "media"); break;
-        case "sendLocation":   args = buildArgs(chatId, payload, "latitude", "longitude"); break;
         case "sendVenue":      args = buildArgs(chatId, payload, "latitude", "longitude", "title", "address"); break;
-        case "sendContact":    args = buildArgs(chatId, payload, "phone_number", "first_name"); break;
-        case "sendChatAction": args = buildArgs(chatId, payload, "chat_action"); break;
+        case "sendVideo":      args = buildArgs(chatId, payload, "video"); break;
+        case "sendVideoNote":  args = buildArgs(chatId, payload, "video_note"); break;
+        case "sendVoice":      args = buildArgs(chatId, payload, "voice"); break;
 
-        case "deleteMessage": args = buildArgs(chatId, payload, "message_id"); break;
-        case "answerCallbackQuery": args = buildArgs(chatId, payload, "callback_query_id"); break;
-        case "editMessageReplyMarkup": args = buildArgs(chatId, payload, "reply_markup"); break;
+        case "deleteMessage":        args = buildArgs(chatId, payload, "message_id"); break;
+        case "deleteChatPhoto":      args = buildArgs(chatId, payload); break;
+        case "deleteChatSticker":    args = buildArgs(chatId, payload); break;
+        case "deleteChatStickerSet": args = buildArgs(chatId, payload); break;
+
+        case "answerCallbackQuery": args = buildArgs(undefined, payload, "callback_query_id"); break;
+
+        case "editMessageCaption":      args = buildArgs(undefined, payload, "caption"); break;
+        case "editMessageLiveLocation": args = buildArgs(undefined, payload, "latitude", "longitude"); break;
+        case "editMessageReplyMarkup":  args = buildArgs(undefined, payload, "reply_markup"); break;
+        case "editMessageText":         args = buildArgs(undefined, payload, "text"); break;
       }
 
       if (args.length > 0) {
