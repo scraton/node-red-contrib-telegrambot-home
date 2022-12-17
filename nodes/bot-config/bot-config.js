@@ -10,10 +10,15 @@ module.exports = function(RED) {
     this.usernames = (n.usernames) ? n.usernames.split(",").map(function(u){ return u.trim(); }) : [];
     this.chatIds = (n.chatIds) ? n.chatIds.split(",").map(function(id){ return parseInt(id); }) : [];
     this.pollInterval = parseInt(n.pollInterval);
+    this.pollTimeout = parseInt(n.pollTimeout);
     this.nodes = [];
 
     if (isNaN(this.pollInterval)) {
       this.pollInterval = 300;
+    }
+
+    if (isNaN(this.pollTimeout)) {
+      this.pollTimeout = 10;
     }
 
     this.getTelegramBot = function () {
@@ -26,7 +31,10 @@ module.exports = function(RED) {
 
             var polling = {
               autoStart: true,
-              interval: this.pollInterval
+              interval: this.pollInterval,
+              params: {
+                timeout: this.pollTimeout,
+              },
             };
 
             var options = {
@@ -53,19 +61,21 @@ module.exports = function(RED) {
               if (error.message == "ETELEGRAM: 401 Unauthorized") {
                 hint = `Please check that your bot token is valid: ${node.token}`;
                 stopPolling = true;
-              } else if (error.message.startsWith("EFATAL: Error: connect ETIMEDOUT")) {
+              } else if (error.message.includes("ETIMEDOUT")) {
                 hint = "Timeout connecting to server. Trying again.";
-              } else if (error.message.startsWith("EFATAL: Error: read ECONNRESET")) {
+              } else if (error.message.includes("ECONNRESET")) {
                 hint = "Network connection may be down. Trying again.";
-              } else if (error.message.startsWith("EFATAL: Error: getaddrinfo ENOTFOUND")) {
+              } else if (error.message.includes("ENOTFOUND")) {
                 hint = "Network connection may be down. Trying again.";
+              } else if (error.message.includes("ECONNREFUSED")) {
+                hint = "Server did not accept our connection.";
               } else {
                 hint = "Unknown error. Trying again.";
               }
 
               if (stopPolling) {
-                node.abortBot(error.message, function(){
-                  node.warn(`Bot stopped: ${hint}`);
+                node.abortBot(hint, function(){
+                  node.warn(`Bot stopped: ${error.message}`);
                 });
               } else {
                 node.warn(hint);
@@ -91,17 +101,22 @@ module.exports = function(RED) {
     });
 
     this.abortBot = function(hint, done){
+      function disableNode(n) {
+        n.telegramBot = null;
+        n.status = "disconnected";
+        n.setNodeStatus({ fill: "red", shape: "ring", text: `bot stopped (${hint})`});
+      }
+
       if (node.telegramBot !== null && node.telegramBot._polling) {
-        node.telegramBot.stopPolling()
-                        .then(function(){
-                          node.telegramBot = null;
-                          node.status = "disconnected";
-                          node.setNodeStatus({ fill: "red", shape: "ring", text: `bot stopped (${hint})`});
-                          done();
-                        });
+        node.telegramBot
+          .stopPolling()
+          .then(function(){
+            node.nodes.forEach((n) => disableNode);
+            disableNode(node);
+            done();
+          });
       } else {
-        node.status = "disconnected";
-        node.setNodeStatus({ fill: "red", shape: "ring", text: `bot stopped (${hint})`});
+        disableNode(node);
         done();
       }
     };
