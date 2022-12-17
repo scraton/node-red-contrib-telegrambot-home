@@ -41,6 +41,7 @@
         <select id="node-input-parseMode">
             <option value="">Plain Text</option>
             <option value="Markdown">Markdown</option>
+            <option value="MarkdownV2">MarkdownV2</option>
             <option value="HTML">HTML</option>
         </select>
     </div>
@@ -67,7 +68,7 @@
         <dd>Optional. Telegram chat ID to send the message. Specify a value to have this node send to the same chat every time. Leave blank to allow passing in the chat ID via <code>msg.telegram.chat.id</code>.</dd>
 
         <dt>Parse Mode <span class="property-type">enum</span></dt>
-        <dd>How the Telegram client should parse the message. Can be plain text, <a href="https://core.telegram.org/bots/api/#markdown-style" target="_blank" rel="noopener noreferrer">Markdown</a>, or <a href="https://core.telegram.org/bots/api/#html-style" target="_blank" rel="noopener noreferrer">HTML</a>.</dd>
+        <dd>How the Telegram client should parse the message. Can be plain text, <a href="https://core.telegram.org/bots/api/#markdown-style" target="_blank" rel="noopener noreferrer">Markdown</a>, <a href="https://core.telegram.org/bots/api/#markdownv2-style" target="_blank" rel="noopener noreferrer">MarkdownV2</a>, or <a href="https://core.telegram.org/bots/api/#html-style" target="_blank" rel="noopener noreferrer">HTML</a>.</dd>
 
         <dt class="optional">Message <span class="property-type">string</span></dt>
         <dd>Optional. If provided, this message will be sent when the node triggers. If not provided, the contents of <code>msg.payload</code> will be sent.</dd>
