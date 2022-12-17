@@ -1,0 +1,65 @@
+[
+  {
+    "id": "96c0e76d4d75681e",
+    "type": "tab",
+    "label": "Flow 3",
+    "disabled": false,
+    "info": "",
+    "env": []
+  },
+  {
+    "id": "765f805efe882cab",
+    "type": "inject",
+    "z": "96c0e76d4d75681e",
+    "name": "",
+    "props": [{ "p": "payload" }, { "p": "topic", "vt": "str" }],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 180,
+    "y": 260,
+    "wires": [["43e1f1f799b44065"]]
+  },
+  {
+    "id": "43e1f1f799b44065",
+    "type": "telegrambot-payload",
+    "z": "96c0e76d4d75681e",
+    "name": "",
+    "bot": "1920d99f282aedbb",
+    "chatId": "1234",
+    "sendMethod": "sendPhoto",
+    "payload": "{\n    \"photo\": \"https://i.imgur.com/O6zVEHF.jpg\",\n    \"caption\": \"Dingle Peninsula, Ireland\"\n}",
+    "x": 370,
+    "y": 260,
+    "wires": [["65f0f1d20bfbe98b"]]
+  },
+  {
+    "id": "65f0f1d20bfbe98b",
+    "type": "debug",
+    "z": "96c0e76d4d75681e",
+    "name": "debug 1",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 560,
+    "y": 260,
+    "wires": []
+  },
+  {
+    "id": "1920d99f282aedbb",
+    "type": "telegrambot-config",
+    "botname": "MyTelegramBot",
+    "usernames": "",
+    "chatIds": "",
+    "pollInterval": "300"
+  }
+]

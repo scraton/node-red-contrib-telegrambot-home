@@ -1,0 +1,44 @@
+[
+  {
+    "id": "96c0e76d4d75681e",
+    "type": "tab",
+    "label": "Flow 3",
+    "disabled": false,
+    "info": "",
+    "env": []
+  },
+  {
+    "id": "f62e39f978116a30",
+    "type": "telegrambot-command",
+    "z": "96c0e76d4d75681e",
+    "name": "",
+    "bot": "1920d99f282aedbb",
+    "command": "Thank you",
+    "commandType": "str",
+    "commandCase": false,
+    "x": 150,
+    "y": 280,
+    "wires": [["0735420b6e4f9948"]]
+  },
+  {
+    "id": "0735420b6e4f9948",
+    "type": "telegrambot-notify",
+    "z": "96c0e76d4d75681e",
+    "name": "",
+    "bot": "1920d99f282aedbb",
+    "chatId": "",
+    "message": "You're welcome :)",
+    "parseMode": "",
+    "x": 360,
+    "y": 280,
+    "wires": []
+  },
+  {
+    "id": "1920d99f282aedbb",
+    "type": "telegrambot-config",
+    "botname": "MyTelegramBot",
+    "usernames": "",
+    "chatIds": "",
+    "pollInterval": "300"
+  }
+]
