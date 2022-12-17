@@ -32,6 +32,6 @@
   },
   "homepage": "https://github.com/scraton/node-red-contrib-telegrambot-home#readme",
   "dependencies": {
-    "node-telegram-bot-api": "^0.54.0"
+    "node-telegram-bot-api": "^0.60.0"
   }
 }
