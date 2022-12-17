@@ -47,6 +47,7 @@ module.exports = function(RED) {
         }
 
         node.telegramBot.sendMessage(chatId, messageToSend, options).then(function(sent){
+          utils.updateNodeStatusSent(node);
           msg.telegram = { sentMessageId: sent.message_id };
           node.send(msg);
         }).catch(function(reason) {

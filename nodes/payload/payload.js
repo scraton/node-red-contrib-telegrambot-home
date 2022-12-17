@@ -125,6 +125,7 @@ module.exports = function(RED) {
 
       if (args.length > 0) {
         node.telegramBot[sendMethod](...args).then(function(response){
+          utils.updateNodeStatusSent(node);
           msg.payload = response;
           node.send(msg);
         });

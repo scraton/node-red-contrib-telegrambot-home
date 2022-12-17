@@ -36,6 +36,7 @@ module.exports = function(RED) {
 
         if (node.bot.isAuthorized(chatId, username)) {
           if (matchedCommand(node.command, botMsg.text)) {
+            utils.updateNodeStatusReceived(node);
             node.send(msg);
           }
         } else {

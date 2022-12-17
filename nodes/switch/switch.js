@@ -79,7 +79,7 @@ module.exports = function(RED) {
               }
 
               // Update node status
-              utils.updateNodeStatusSuccess(node);
+              utils.updateNodeStatusReceived(node);
 
               if (node.autoAnswerCallback) {
                 // Answer the callback so progress can stop showing
