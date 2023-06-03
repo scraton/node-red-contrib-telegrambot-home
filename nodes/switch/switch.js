@@ -8,6 +8,7 @@ module.exports = function(RED) {
     // Get base configuration
     this.bot = RED.nodes.getNode(config.bot);
     this.chatId = parseInt(config.chatId);
+    this.parseMode = config.parseMode;
     this.question = config.question || "";
     this.answers = config.answers || [];
     this.timeoutValue = config.timeoutValue || null;
@@ -144,6 +145,7 @@ module.exports = function(RED) {
           return node.verticalAnswers ? [answer] : answer;
         });
         var options = {
+          parse_mode: node.parseMode,
           reply_markup: {
             inline_keyboard: node.verticalAnswers ? answerOpts : [answerOpts]
           }

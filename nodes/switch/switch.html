@@ -18,7 +18,8 @@
             autoAnswerCallback: { value: true, required: false },
             verticalAnswers: { value: false, required: false },
             timeoutValue: { value: null },
-            timeoutUnits: { value: null }
+            timeoutUnits: { value: null },
+            parseMode: { value: "", required: false }
         },
         inputs: 1,
         outputs: 1,
@@ -165,6 +166,15 @@
         <input type="text" id="node-input-chatId" placeholder="(e.g. 1234)">
     </div>
     <div class="form-row">
+        <label for="node-input-parseMode">Parse Mode</label>
+        <select id="node-input-parseMode">
+            <option value="">Plain Text</option>
+            <option value="Markdown">Markdown</option>
+            <option value="MarkdownV2">MarkdownV2</option>
+            <option value="HTML">HTML</option>
+        </select>
+    </div>
+    <div class="form-row">
         <label for="node-input-question">Question</label>
         <input type="text" id="node-input-question" placeholder="(e.g. Should I continue?)">
     </div>
@@ -210,6 +220,9 @@
 
         <dt class="optional">Chat ID <span class="property-type">int</span></dt>
         <dd>Optional. Telegram chat ID to send the message. Specify a value to have this node send to the same chat every time. Leave blank to allow passing in the chat ID via <code>msg.telegram.chat.id</code>.</dd>
+
+        <dt>Parse Mode <span class="property-type">enum</span></dt>
+        <dd>How the Telegram client should parse the message. Can be plain text, <a href="https://core.telegram.org/bots/api/#markdown-style" target="_blank" rel="noopener noreferrer">Markdown</a>, <a href="https://core.telegram.org/bots/api/#markdownv2-style" target="_blank" rel="noopener noreferrer">MarkdownV2</a>, or <a href="https://core.telegram.org/bots/api/#html-style" target="_blank" rel="noopener noreferrer">HTML</a>.</dd>
 
         <dt class="optional">Auto-Answer <span class="property-type">list</span></dt>
         <dd>When enabled, automatically respond to the Telegram callback to resolve it as finished. Otherwise, you will have to send a payload to Telegram yourself to mark the request as complete.</dd>
