@@ -14,6 +14,7 @@
             chatId: { value: "", required: false },
             question: { value: "" },
             answers: { value: [] },
+            answersOverride: { value: false, required: false },
             outputs: { value: 1 },
             autoAnswerCallback: { value: true, required: false },
             verticalAnswers: { value: false, required: false },
@@ -190,6 +191,10 @@
         </select>
     </div>
     <div class="form-row">
+        <label for="node-input-answersOverride">Overwrite Answer with <code>msg.answer</code></label>
+        <input type="checkbox" id="node-input-answersOverride" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+    <div class="form-row">
         <label for="node-input-autoAnswerCallback">Auto-Answer</label>
         <input type="checkbox" id="node-input-autoAnswerCallback" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
@@ -223,6 +228,9 @@
 
         <dt>Parse Mode <span class="property-type">enum</span></dt>
         <dd>How the Telegram client should parse the message. Can be plain text, <a href="https://core.telegram.org/bots/api/#markdown-style" target="_blank" rel="noopener noreferrer">Markdown</a>, <a href="https://core.telegram.org/bots/api/#markdownv2-style" target="_blank" rel="noopener noreferrer">MarkdownV2</a>, or <a href="https://core.telegram.org/bots/api/#html-style" target="_blank" rel="noopener noreferrer">HTML</a>.</dd>
+
+        <dt class="optional">Overwrite Answer <span class="property-type">boolean</span></label>
+        <dd>Overwrite Answer with <code>msg.answer</code>. Given content has to be an Array</dd>
 
         <dt class="optional">Auto-Answer <span class="property-type">list</span></dt>
         <dd>When enabled, automatically respond to the Telegram callback to resolve it as finished. Otherwise, you will have to send a payload to Telegram yourself to mark the request as complete.</dd>

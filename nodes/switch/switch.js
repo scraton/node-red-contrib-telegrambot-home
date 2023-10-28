@@ -11,6 +11,7 @@ module.exports = function(RED) {
     this.parseMode = config.parseMode;
     this.question = config.question || "";
     this.answers = config.answers || [];
+    this.answersOverride = config.answersOverride;
     this.timeoutValue = config.timeoutValue || null;
     this.timeoutUnits = config.timeoutUnits || null;
     this.timeoutCallback = null;
@@ -45,7 +46,7 @@ module.exports = function(RED) {
     }
 
     // Compute output ports
-    var portCount = (this.timeoutValue === null) ? this.answers.length : this.answers.length + 1;
+    var portCount = (this.answersOverride ? 1 : this.answers.length) + (this.timeoutValue === null ? 0 : 1);
     var ports = new Array(portCount);
 
     for (var i = 0; i < portCount; i++) {
@@ -60,16 +61,17 @@ module.exports = function(RED) {
 
       var chatId = node.chatId || msg.telegram.chat.id;
       var question = node.question || msg.payload;
-      var answers = node.answers || [];
-
+      var answersOverride = node.answersOverride || false;
+      var answers = (node.answersOverride ? msg.answers : node.answers) || [];
+      
       if (question && answers.length > 0) {
         var listener = function(botMsg){
           var username = botMsg.from.username;
           var fromChatId = botMsg.message.chat.id;
           var messageId = botMsg.message.message_id;
           var callbackQueryId = botMsg.id;
-
-          if (botMsg.data && fromChatId === chatId && messageId === msg.telegram.messageId) {
+          
+          if (botMsg.data && fromChatId == chatId && messageId == msg.telegram.messageId) {
             if (node.bot.isAuthorized(chatId, username)) {
               // Remove this listener since we got our reply
               node.telegramBot.removeListener("callback_query", listener);
@@ -100,13 +102,18 @@ module.exports = function(RED) {
               // Continue with the original message
               var outPorts = ports.slice(0);
               var outputPort = parseInt(botMsg.data);
-
-              if (!isNaN(outputPort) && outputPort < portCount) {
-                outPorts[outputPort] = msg;
-                node.send(outPorts);
-              } else {
-                node.warn("invalid callback data received from telegram");
-              }
+              if(answersOverride){
+                  msg.payload = (msg.answers[botMsg.data].callback !== undefined ? msg.answers[botMsg.data].callback : msg.answers[botMsg.data]);
+                  msg.botMsg=botMsg;
+                  node.send(msg);
+              }else{
+                  if (!isNaN(outputPort) && outputPort < portCount) {
+                    outPorts[outputPort] = msg;
+                    node.send(outPorts);
+                  } else {
+                    node.warn("invalid callback data received from telegram");
+                  }
+                }
             } else {
               node.warn(`received callback in ${chatId} from '${username}' was unauthorized`);
             }
@@ -141,7 +148,7 @@ module.exports = function(RED) {
 
         var chunkSize = 4000;
         var answerOpts = answers.map(function(answer, idx){
-          var answer = { text: answer, callback_data: idx };
+          var answer = { text: (answersOverride && answer.text !== undefined ? answer.text : answer), callback_data: idx };
           return node.verticalAnswers ? [answer] : answer;
         });
         var options = {
